@@ -9,7 +9,7 @@ import { intlLocale } from "@/i18n/config";
 import { type BlogPost, getSiteUrl, HOSTED_APP_URL } from "@/lib/blog-posts";
 import { OPUSCLIP_COMPARISON_HREF, SELF_HOSTING_GUIDE_HREF } from "@/lib/marketing-links";
 
-const repository = "https://github.com/FujiwaraChoki/supoclip";
+const repository = "https://github.com/FujiwaraChoki/Clipify";
 const workflowIcons = [Upload, Sparkles, ScanFace, Film];
 
 export async function SupoLiveArticle({ post }: { post: BlogPost }) {
@@ -40,8 +40,8 @@ export async function SupoLiveArticle({ post }: { post: BlogPost }) {
         datePublished: post.publishedAt,
         dateModified: post.updatedAt,
         author: { "@type": "Organization", name: post.author },
-        publisher: { "@type": "Organization", name: "SupoClip", url: siteUrl, logo: { "@type": "ImageObject", url: `${siteUrl}/logo.png` } },
-        image: post.image ? [`${siteUrl}${post.image.src}`, `${siteUrl}/blog/supoclip-editor.webp`] : undefined,
+        publisher: { "@type": "Organization", name: "Clipify", url: siteUrl, logo: { "@type": "ImageObject", url: `${siteUrl}/logo.png` } },
+        image: post.image ? [`${siteUrl}${post.image.src}`, `${siteUrl}/blog/Clipify-editor.webp`] : undefined,
         articleSection: post.category,
         inLanguage: intlLocale(locale),
         mainEntityOfPage: `${siteUrl}/blog/${post.slug}`,
@@ -62,7 +62,7 @@ export async function SupoLiveArticle({ post }: { post: BlogPost }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
       <header className="border-b">
         <nav aria-label={t("shell.blogNav")} className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-6 py-5">
-          <Link href="/" className="flex items-center gap-2.5 text-xl font-bold"><Image src="/logo.png" alt="" width={30} height={30} className="rounded-lg dark:invert" />SupoClip</Link>
+          <Link href="/" className="flex items-center gap-2.5 text-xl font-bold"><Image src="/logo.png" alt="" width={30} height={30} className="rounded-lg dark:invert" />Clipify</Link>
           <Link href="/blog" className="text-sm underline underline-offset-4">{t("shell.allArticles")}</Link>
         </nav>
       </header>
@@ -107,9 +107,9 @@ export async function SupoLiveArticle({ post }: { post: BlogPost }) {
         <div className="mx-auto max-w-3xl space-y-6 leading-8 [&_h2]:pt-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:text-lg [&_h3]:font-semibold [&_a]:underline [&_a]:underline-offset-4 [&_p]:text-muted-foreground">
           <p>{t(`${slug}.body.p1`)}</p>
           <p>{t(`${slug}.body.p2`)}</p>
-          <h2>{t(`${slug}.body.whatSupoclip`)}</h2>
+          <h2>{t(`${slug}.body.whatClipify`)}</h2>
           <p>
-            {t.rich(`${slug}.body.whatSupoclipBody`, { repo: (chunks) => <a href={repository}>{chunks}</a> })}
+            {t.rich(`${slug}.body.whatClipifyBody`, { repo: (chunks) => <a href={repository}>{chunks}</a> })}
           </p>
           <h2>{t(`${slug}.body.whatSupo`)}</h2>
           <p>
@@ -122,7 +122,7 @@ export async function SupoLiveArticle({ post }: { post: BlogPost }) {
               <thead className="bg-muted">
                 <tr>
                   <th scope="col" className="p-4">{t(`${slug}.comparison.priority`)}</th>
-                  <th scope="col" className="p-4">SupoClip</th>
+                  <th scope="col" className="p-4">Clipify</th>
                   <th scope="col" className="p-4">supo.live</th>
                 </tr>
               </thead>
@@ -130,7 +130,7 @@ export async function SupoLiveArticle({ post }: { post: BlogPost }) {
                 {(["deployment", "source", "usecase", "customization", "usage"] as const).map((row) => (
                   <tr key={row} className="border-t">
                     <th scope="row" className="p-4 align-top">{t(`${slug}.comparison.rows.${row}.label`)}</th>
-                    <td className="p-4 align-top">{t(`${slug}.comparison.rows.${row}.supoclip`)}</td>
+                    <td className="p-4 align-top">{t(`${slug}.comparison.rows.${row}.Clipify`)}</td>
                     <td className="p-4 align-top">{t(`${slug}.comparison.rows.${row}.supolive`)}</td>
                   </tr>
                 ))}
@@ -155,8 +155,8 @@ export async function SupoLiveArticle({ post }: { post: BlogPost }) {
             <figcaption className="mt-4 text-xs leading-5 text-muted-foreground">{t(`${slug}.workflow.caption`)}</figcaption>
           </figure>
           <figure className="overflow-hidden rounded-2xl border">
-            <a href="/blog/supoclip-editor.webp" aria-label={t(`${slug}.editor.aria`)}>
-              <Image src="/blog/supoclip-editor.webp" alt={t(`${slug}.editor.alt`)} width={1800} height={1109} sizes="(max-width: 768px) 100vw, 768px" className="h-auto w-full" />
+            <a href="/blog/Clipify-editor.webp" aria-label={t(`${slug}.editor.aria`)}>
+              <Image src="/blog/Clipify-editor.webp" alt={t(`${slug}.editor.alt`)} width={1800} height={1109} sizes="(max-width: 768px) 100vw, 768px" className="h-auto w-full" />
             </a>
             <figcaption className="bg-muted/25 px-5 py-4 text-sm leading-6 text-muted-foreground">{t(`${slug}.editor.caption`)}</figcaption>
           </figure>

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { createProxyResponse, fetchBackend } from "@/server/backend-api";
 import { getServerSession } from "@/server/session";
 
-/** Feature flags evaluated for the signed-in user; the iOS app's `x-supoclip-client` is forwarded. */
+/** Feature flags evaluated for the signed-in user; the iOS app's `x-Clipify-client` is forwarded. */
 export async function GET() {
   const session = await getServerSession();
   if (!session?.user?.id) {

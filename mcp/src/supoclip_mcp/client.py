@@ -1,14 +1,14 @@
 """
-Thin async HTTP client for the SupoClip backend API.
+Thin async HTTP client for the Clipify backend API.
 
-Authentication is resolved from :class:`~supoclip_mcp.config.Settings` and
+Authentication is resolved from :class:`~Clipify_mcp.config.Settings` and
 supports three modes, tried in priority order:
 
 1. ``api_key``         -> ``Authorization: Bearer <key>`` (recommended; the
    default for the hosted service).
 2. ``signed_headers``  -> the frontend's HMAC scheme, when a user id and the
    backend auth secret are both provided (useful for self-hosting).
-3. ``unsigned_user_id`` -> a bare ``x-supoclip-user-id`` header, for a
+3. ``unsigned_user_id`` -> a bare ``x-Clipify-user-id`` header, for a
    self-hosted backend running with ``ALLOW_UNSIGNED_BACKEND_AUTH=true``.
 """
 
@@ -27,11 +27,11 @@ import httpx
 from .config import Settings
 
 
-class SupoClipError(Exception):
+class ClipifyError(Exception):
     """A friendly, already-formatted error suitable for returning to the model."""
 
 
-class AuthNotConfiguredError(SupoClipError):
+class AuthNotConfiguredError(ClipifyError):
     """Raised when an authenticated operation is attempted without credentials."""
 
 
@@ -40,14 +40,14 @@ def _signed_headers(user_id: str, secret: str) -> Dict[str, str]:
     payload = f"{user_id}:{timestamp}".encode("utf-8")
     signature = hmac.new(secret.encode("utf-8"), payload, hashlib.sha256).hexdigest()
     return {
-        "x-supoclip-user-id": user_id,
-        "x-supoclip-ts": timestamp,
-        "x-supoclip-signature": signature,
+        "x-Clipify-user-id": user_id,
+        "x-Clipify-ts": timestamp,
+        "x-Clipify-signature": signature,
     }
 
 
-class SupoClipClient:
-    """Async client wrapping the SupoClip REST API."""
+class ClipifyClient:
+    """Async client wrapping the Clipify REST API."""
 
     def __init__(self, settings: Settings):
         self.settings = settings
@@ -60,15 +60,15 @@ class SupoClipClient:
         if mode == "signed_headers":
             return _signed_headers(self.settings.user_id, self.settings.auth_secret)  # type: ignore[arg-type]
         if mode == "unsigned_user_id":
-            return {"x-supoclip-user-id": self.settings.user_id}  # type: ignore[dict-item]
+            return {"x-Clipify-user-id": self.settings.user_id}  # type: ignore[dict-item]
         return {}
 
     def _require_auth(self) -> None:
         if not self.settings.is_authenticated:
             raise AuthNotConfiguredError(
-                "No credentials configured. Set SUPOCLIP_API_KEY to a key created "
-                "in your SupoClip account (Settings -> API Keys). For a self-hosted "
-                "backend you may instead set SUPOCLIP_USER_ID (+ SUPOCLIP_AUTH_SECRET "
+                "No credentials configured. Set Clipify_API_KEY to a key created "
+                "in your Clipify account (Settings -> API Keys). For a self-hosted "
+                "backend you may instead set Clipify_USER_ID (+ Clipify_AUTH_SECRET "
                 "if signing is enforced)."
             )
 
@@ -97,11 +97,11 @@ class SupoClipClient:
                     method, url, params=params, json=json_body, headers=headers
                 )
         except httpx.TimeoutException as exc:
-            raise SupoClipError(
+            raise ClipifyError(
                 f"Request to {path} timed out after {self.settings.timeout:g}s."
             ) from exc
         except httpx.HTTPError as exc:
-            raise SupoClipError(f"Could not reach SupoClip at {url}: {exc}") from exc
+            raise ClipifyError(f"Could not reach Clipify at {url}: {exc}") from exc
 
         return self._parse(response, path)
 
@@ -133,12 +133,12 @@ class SupoClipClient:
                         if response.is_redirect:
                             location = response.headers.get("location")
                             if not location:
-                                raise SupoClipError("Download redirect has no destination.")
+                                raise ClipifyError("Download redirect has no destination.")
                             download_url = urljoin(download_url, location)
                             target = urlsplit(download_url)
                             same_backend = target[:2] == backend_origin
                             if target.scheme not in {"http", "https"} or (not same_backend and target.scheme != "https"):
-                                raise SupoClipError("Download redirect must use HTTPS for external storage.")
+                                raise ClipifyError("Download redirect must use HTTPS for external storage.")
                             # HTTP clients do not automatically strip custom HMAC
                             # headers on a cross-origin redirect. Send no backend
                             # credentials to storage; the URL carries its own grant.
@@ -147,9 +147,9 @@ class SupoClipClient:
                             continue
                         if response.status_code not in {200, 206}:
                             if urlsplit(download_url)[:2] != backend_origin:
-                                raise SupoClipError(f"Storage download failed ({response.status_code}). Please retry.")
+                                raise ClipifyError(f"Storage download failed ({response.status_code}). Please retry.")
                             body = (await response.aread()).decode("utf-8", "replace")
-                            raise SupoClipError(_error_message(response.status_code, body, path))
+                            raise ClipifyError(_error_message(response.status_code, body, path))
                         with temporary.open("wb") as handle:
                             async for chunk in response.aiter_bytes(chunk_size=1 << 16):
                                 handle.write(chunk)
@@ -157,11 +157,11 @@ class SupoClipClient:
                         temporary.replace(dest_path)
                         break
                 else:
-                    raise SupoClipError("Download redirected too many times.")
+                    raise ClipifyError("Download redirected too many times.")
         except httpx.HTTPError as exc:
             # Exceptions may contain signed storage URLs. Keep them out of the
             # user-visible error while retaining the exception type for support.
-            raise SupoClipError(f"Download from {path} failed ({type(exc).__name__}).") from exc
+            raise ClipifyError(f"Download from {path} failed ({type(exc).__name__}).") from exc
         finally:
             temporary.unlink(missing_ok=True)
 
@@ -175,7 +175,7 @@ class SupoClipClient:
     @staticmethod
     def _parse(response: httpx.Response, path: str) -> Any:
         if response.status_code >= 400:
-            raise SupoClipError(
+            raise ClipifyError(
                 _error_message(response.status_code, response.text, path)
             )
         if not response.content:
@@ -199,7 +199,7 @@ def _error_message(status: int, body: str, path: str) -> str:
 
     if status == 401:
         return (
-            "Authentication failed (401). Check SUPOCLIP_API_KEY is valid and not "
+            "Authentication failed (401). Check Clipify_API_KEY is valid and not "
             f"revoked. Backend said: {detail}"
         )
     if status == 402:
@@ -213,4 +213,4 @@ def _error_message(status: int, body: str, path: str) -> str:
         return f"Not found (404) for {path}: {detail}"
     if status == 429:
         return "Rate limited (429). Wait a moment and try again."
-    return f"SupoClip API error ({status}) for {path}: {detail}"
+    return f"Clipify API error ({status}) for {path}: {detail}"

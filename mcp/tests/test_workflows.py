@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from supoclip_mcp import server
+from Clipify_mcp import server
 
 URL = "https://youtu.be/abcdefghijk"
 
@@ -15,7 +15,7 @@ URL = "https://youtu.be/abcdefghijk"
 def _create(monkeypatch, **kwargs):
     request = AsyncMock(return_value={"task_id": "task-1"})
     monkeypatch.setattr(server, "_client", lambda: SimpleNamespace(request=request))
-    result = asyncio.run(server.supoclip_create_clip_task(url=URL, **kwargs))
+    result = asyncio.run(server.Clipify_create_clip_task(url=URL, **kwargs))
     return request, result
 
 
@@ -104,7 +104,7 @@ def test_list_workflows_reads_the_gate(monkeypatch):
     info = {"enabled": False, "workflows": [{"id": "highlights", "available": True, "min_source_seconds": 0}]}
     request = AsyncMock(return_value=info)
     monkeypatch.setattr(server, "_client", lambda: SimpleNamespace(request=request))
-    result = asyncio.run(server.supoclip_list_workflows())
+    result = asyncio.run(server.Clipify_list_workflows())
     assert request.await_args.args == ("GET", "/tasks/workflows")
     assert '"enabled": false' in result
 
@@ -112,7 +112,7 @@ def test_list_workflows_reads_the_gate(monkeypatch):
 def test_create_clip_alias_stays_highlights(monkeypatch):
     request = AsyncMock(return_value={"task_id": "task-1"})
     monkeypatch.setattr(server, "_client", lambda: SimpleNamespace(request=request))
-    asyncio.run(server.supoclip_create_clip(url=URL))
+    asyncio.run(server.Clipify_create_clip(url=URL))
     assert "workflow" not in request.await_args.kwargs["json_body"]
 
 

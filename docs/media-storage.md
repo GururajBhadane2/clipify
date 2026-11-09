@@ -41,11 +41,11 @@ file or create another key for an identity that already has one.
 aws login
 backend/.venv/bin/python scripts/setup-media-storage.py
 backend/.venv/bin/python scripts/setup-media-storage.py --apply \
-  --credentials-file "$HOME/.config/supoclip/media-storage.env"
+  --credentials-file "$HOME/.config/Clipify/media-storage.env"
 ```
 
 Supply every deployed frontend origin with repeated `--origin` arguments if the
-defaults (`https://supoclip.com`, `https://www.supoclip.com`, localhost port 3107)
+defaults (`https://Clipify.com`, `https://www.Clipify.com`, localhost port 3107)
 do not cover the installation. Keep secrets outside Git. Copy configuration into
 the deployment's secret store or private environment file. Apply backend migrations
 before starting the updated worker.

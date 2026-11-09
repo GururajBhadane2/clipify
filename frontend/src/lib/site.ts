@@ -2,13 +2,13 @@ export const SITE_NAME = "Clipify";
 export const COMPANY_NAME = "Shiori LLC";
 export const COMPANY_REGISTRATION_NUMBER = "10603065";
 export const COMPANY_REGISTERED_ADDRESS = "8 The Green, Suite B, Dover, DE 19901, United States";
-export const DEFAULT_SITE_URL = "https://www.supoclip.com";
+export const DEFAULT_SITE_URL = "https://www.Clipify.com";
 export const HOSTED_APP_URL = DEFAULT_SITE_URL;
-export const GITHUB_URL = "https://github.com/FujiwaraChoki/supoclip";
+export const GITHUB_URL = "https://github.com/FujiwaraChoki/Clipify";
 export const APP_STORE_ID = "6784760040";
-export const APP_STORE_URL = `https://apps.apple.com/us/app/supoclip/id${APP_STORE_ID}`;
+export const APP_STORE_URL = `https://apps.apple.com/us/app/Clipify/id${APP_STORE_ID}`;
 export const PRODUCT_HUNT_URL =
-  "https://www.producthunt.com/products/supoclip?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-supoclip";
+  "https://www.producthunt.com/products/Clipify?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-Clipify";
 /** Product Hunt's launch badge; it shows the live upvote count once the launch is up. */
 export const PRODUCT_HUNT_BADGE_URL =
   "https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1276786&theme=dark";

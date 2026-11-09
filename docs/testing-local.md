@@ -1,7 +1,7 @@
 # Testing with local YouTube downloads
 
 Use a disposable PostgreSQL database and Redis instance. The browser seed step replaces
-its `e2e-user@supoclip.test` and `e2e-admin@supoclip.test` accounts. Do not point these
+its `e2e-user@Clipify.test` and `e2e-admin@Clipify.test` accounts. Do not point these
 checks at a database containing real work.
 
 ## Services
@@ -10,7 +10,7 @@ Before starting either backend service, apply migrations to an empty test databa
 
 ```sh
 cd frontend
-DATABASE_URL=postgresql://supoclip@127.0.0.1:55432/supoclip_test pnpm exec prisma migrate deploy
+DATABASE_URL=postgresql://Clipify@127.0.0.1:55432/Clipify_test pnpm exec prisma migrate deploy
 cd ..
 ```
 
@@ -18,9 +18,9 @@ Start the API and ARQ worker with the **same** database, Redis, media directory 
 provider environment:
 
 ```sh
-export DATABASE_URL=postgresql+asyncpg://supoclip@127.0.0.1:55432/supoclip_test
+export DATABASE_URL=postgresql+asyncpg://Clipify@127.0.0.1:55432/Clipify_test
 export REDIS_HOST=127.0.0.1 REDIS_PORT=56379
-export TEMP_DIR=/tmp/supoclip-local-media
+export TEMP_DIR=/tmp/Clipify-local-media
 export BACKEND_AUTH_SECRET=local-test-backend-secret
 export SELF_HOST=true
 export MEDIA_STORAGE=local
@@ -74,7 +74,7 @@ user's database ID and use the same backend secret and Redis port:
 ```sh
 export LOCAL_TEST_USER_ID=TEST_USER_DATABASE_ID
 export LOCAL_TEST_BACKEND_URL=http://127.0.0.1:8100
-export LOCAL_TEST_ARTIFACTS=/tmp/supoclip-local-evidence
+export LOCAL_TEST_ARTIFACTS=/tmp/Clipify-local-evidence
 backend/.venv/bin/python backend/tests/live/run_local_workflows.py
 ```
 
@@ -105,7 +105,7 @@ tests. Run the full backend suite before the opt-in media tests below.
 
 ```sh
 cd backend
-export TEST_DATABASE_URL=postgresql+asyncpg://supoclip@127.0.0.1:55432/supoclip_test
+export TEST_DATABASE_URL=postgresql+asyncpg://Clipify@127.0.0.1:55432/Clipify_test
 export DATABASE_URL="$TEST_DATABASE_URL"
 export MEDIA_STORAGE=local SELF_HOST=true
 export REDIS_HOST=127.0.0.1 REDIS_PORT=56379

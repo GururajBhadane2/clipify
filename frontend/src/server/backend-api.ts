@@ -31,7 +31,7 @@ export function buildBackendUrl(path: string) {
 const TRACE_ID_PATTERN = /^[A-Za-z0-9._-]{8,128}$/;
 
 /** Which app made the request. The backend evaluates feature flags per platform. */
-export const CLIENT_HEADER = "x-supoclip-client";
+export const CLIENT_HEADER = "x-Clipify-client";
 
 /**
  * Headers every backend call carries from the incoming request:
@@ -39,7 +39,7 @@ export const CLIENT_HEADER = "x-supoclip-client";
  * - `x-trace-id` (set per request in `lib/trace-fetch.ts`) so backend logs and
  *   PostHog errors share an id. Outside a request, or when the header is
  *   missing or malformed, a fresh id is used.
- * - `x-supoclip-client: ios` when the iOS app sent it, so feature flags are
+ * - `x-Clipify-client: ios` when the iOS app sent it, so feature flags are
  *   evaluated for iOS. Anything else is web, and isn't forwarded.
  */
 export async function backendTraceHeaders(): Promise<Record<string, string>> {

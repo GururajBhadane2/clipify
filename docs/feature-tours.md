@@ -1,6 +1,6 @@
 # Feature tours
 
-Short cards that introduce a new feature to people who already use SupoClip.
+Short cards that introduce a new feature to people who already use Clipify.
 
 ## Adding a tour
 

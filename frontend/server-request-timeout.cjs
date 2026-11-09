@@ -15,7 +15,7 @@
 const http = require("node:http");
 
 const DEFAULT_REQUEST_TIMEOUT_MS = 60 * 60 * 1000;
-const PATCHED = Symbol.for("supoclip.requestTimeoutPatched");
+const PATCHED = Symbol.for("clipify.requestTimeoutPatched");
 
 function requestTimeoutMs(env = process.env) {
   const raw = (env.SERVER_REQUEST_TIMEOUT_MS ?? "").trim();

@@ -1,4 +1,4 @@
-# SupoClip release verification — 2026-09-18
+# Clipify release verification — 2026-09-18
 
 This release consolidates existing behavior and fixes reliability and editing bugs. It adds no new product features. Changes are split across PRs #103–#140; each code PR received an independent agent review, with exact reviewed commits recorded in GitHub review comments. Review findings were fixed before merge.
 
@@ -38,4 +38,4 @@ This report records pre-deployment verification. Deployment is performed only af
 
 See [local testing instructions](testing-local.md) for the committed browser and API runners. Use the committed pnpm and uv lockfiles. Backend integration tests require a dedicated PostgreSQL database; do not point them at production.
 
-Raw logs and media evidence from this run are retained on the testing workstation under `/home/loki/.cache/supoclip-qa/`, including `backend-release-final.log`, `frontend-final.log`, `browser-final.log`, `production-smoke.log`, `api-workflows-final.log`, `mcp-final.log`, and `release-build.log`. Exact reviewed frontend commits and review URLs are recorded in `frontend-review-final-heads.json`; GitHub retains all PR review comments.
+Raw logs and media evidence from this run are retained on the testing workstation under `/home/loki/.cache/Clipify-qa/`, including `backend-release-final.log`, `frontend-final.log`, `browser-final.log`, `production-smoke.log`, `api-workflows-final.log`, `mcp-final.log`, and `release-build.log`. Exact reviewed frontend commits and review URLs are recorded in `frontend-review-final-heads.json`; GitHub retains all PR review comments.

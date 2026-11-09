@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """
-MCP server for SupoClip — an AI tool that turns long-form videos into short,
+MCP server for Clipify — an AI tool that turns long-form videos into short,
 vertical, subtitled viral clips.
 
-The server talks to the SupoClip REST API. By default it targets the official
-hosted instance at ``https://api.supoclip.com``; set ``SUPOCLIP_API_URL`` to
-use a self-hosted backend. Authenticate by creating an API key in your SupoClip
-account and exposing it as ``SUPOCLIP_API_KEY``.
+The server talks to the Clipify REST API. By default it targets the official
+hosted instance at ``https://api.Clipify.com``; set ``Clipify_API_URL`` to
+use a self-hosted backend. Authenticate by creating an API key in your Clipify
+account and exposing it as ``Clipify_API_KEY``.
 
 Typical workflow:
-    1. ``supoclip_create_clip_task`` with a YouTube URL  -> returns a task_id
+    1. ``Clipify_create_clip_task`` with a YouTube URL  -> returns a task_id
        (``workflow`` picks highlights, a series, topic clips, a recap or a trailer)
-    2. ``supoclip_wait_for_task`` (or poll ``supoclip_get_task``) until done
-    3. ``supoclip_list_clips`` / ``supoclip_download_clip`` to retrieve results
+    2. ``Clipify_wait_for_task`` (or poll ``Clipify_get_task``) until done
+    3. ``Clipify_list_clips`` / ``Clipify_download_clip`` to retrieve results
 """
 
 from __future__ import annotations
@@ -40,15 +40,15 @@ try:  # Python 3.10 lacks typing.Literal niceties only in edge cases; import is 
 except ImportError:  # pragma: no cover
     from typing_extensions import Literal  # type: ignore
 
-from .client import AuthNotConfiguredError, SupoClipClient, SupoClipError
+from .client import AuthNotConfiguredError, ClipifyClient, ClipifyError
 from .config import load_settings
 
 SETTINGS = load_settings()
-CLIENT = SupoClipClient(SETTINGS)
+CLIENT = ClipifyClient(SETTINGS)
 
 
-class SupoClipApiKeyVerifier:
-    """Validate MCP Bearer tokens against the configured SupoClip backend."""
+class ClipifyApiKeyVerifier:
+    """Validate MCP Bearer tokens against the configured Clipify backend."""
 
     def __init__(self, api_url: str, timeout: float) -> None:
         self.api_url = api_url.rstrip("/")
@@ -88,8 +88,8 @@ class SupoClipApiKeyVerifier:
         fingerprint = hashlib.sha256(token.encode("utf-8")).hexdigest()[:16]
         return AccessToken(
             token=token,
-            client_id=f"supoclip-api-key-{fingerprint}",
-            scopes=["supoclip"],
+            client_id=f"Clipify-api-key-{fingerprint}",
+            scopes=["Clipify"],
         )
 
 
@@ -101,12 +101,12 @@ def _build_mcp() -> FastMCP:
         auth_settings = AuthSettings(
             issuer_url=public_url,
             resource_server_url=public_url,
-            required_scopes=["supoclip"],
+            required_scopes=["Clipify"],
         )
-        token_verifier = SupoClipApiKeyVerifier(SETTINGS.api_url, SETTINGS.timeout)
+        token_verifier = ClipifyApiKeyVerifier(SETTINGS.api_url, SETTINGS.timeout)
 
     return FastMCP(
-        "supoclip_mcp",
+        "Clipify_mcp",
         host=SETTINGS.mcp_host,
         port=SETTINGS.mcp_port,
         auth=auth_settings,
@@ -147,10 +147,10 @@ def _json(data: object) -> str:
     return json.dumps(data, indent=2, default=str, ensure_ascii=False)
 
 
-def _client() -> SupoClipClient:
+def _client() -> ClipifyClient:
     access_token = get_access_token()
     if access_token and access_token.token:
-        return SupoClipClient(
+        return ClipifyClient(
             replace(
                 SETTINGS,
                 api_key=access_token.token,
@@ -170,7 +170,7 @@ def tool_errors(func: Callable[..., Awaitable[str]]) -> Callable[..., Awaitable[
             return await func(*args, **kwargs)
         except AuthNotConfiguredError as exc:
             return f"Error: {exc}"
-        except SupoClipError as exc:
+        except ClipifyError as exc:
             return f"Error: {exc}"
         except Exception as exc:  # pragma: no cover - defensive
             return f"Error: unexpected {type(exc).__name__}: {exc}"
@@ -205,7 +205,7 @@ def _workflow_fields(workflow: str, topic: str, part_count: int, instructions: s
     """
     workflow = (workflow or "highlights").strip().lower()
     if workflow not in WORKFLOWS:
-        raise SupoClipError("workflow must be highlights, series, topic, recap or trailer.")
+        raise ClipifyError("workflow must be highlights, series, topic, recap or trailer.")
 
     fields: dict = {} if workflow == "highlights" else {"workflow": workflow}
     cleaned_topic = _normalize_text(topic, keep_newlines=False)
@@ -214,23 +214,23 @@ def _workflow_fields(workflow: str, topic: str, part_count: int, instructions: s
             len(cleaned_topic) >= TOPIC_MIN_CHARS or _ONE_CHARACTER_WORD.match(cleaned_topic)
         )
         if not searchable:
-            raise SupoClipError("topic is required for workflow='topic': name the subject to look for, e.g. 'pricing'.")
+            raise ClipifyError("topic is required for workflow='topic': name the subject to look for, e.g. 'pricing'.")
         if len(cleaned_topic) > TOPIC_MAX_CHARS:
-            raise SupoClipError(f"topic must be at most {TOPIC_MAX_CHARS} characters.")
+            raise ClipifyError(f"topic must be at most {TOPIC_MAX_CHARS} characters.")
         fields["workflow_options"] = {"topic": cleaned_topic}
     elif cleaned_topic:
-        raise SupoClipError("topic is only used with workflow='topic'.")
+        raise ClipifyError("topic is only used with workflow='topic'.")
 
     if part_count:
         if workflow != "series":
-            raise SupoClipError("part_count is only used with workflow='series'.")
+            raise ClipifyError("part_count is only used with workflow='series'.")
         if not SERIES_MIN_PARTS <= part_count <= SERIES_MAX_PARTS:
-            raise SupoClipError("part_count must be 0 (auto) or 2 to 10.")
+            raise ClipifyError("part_count must be 0 (auto) or 2 to 10.")
         fields["workflow_options"] = {"part_count": int(part_count)}
 
     cleaned_instructions = _normalize_text(instructions, keep_newlines=True)
     if len(cleaned_instructions) > INSTRUCTIONS_MAX_CHARS:
-        raise SupoClipError(f"instructions must be at most {INSTRUCTIONS_MAX_CHARS} characters.")
+        raise ClipifyError(f"instructions must be at most {INSTRUCTIONS_MAX_CHARS} characters.")
     if cleaned_instructions:
         fields["instructions"] = cleaned_instructions
     return fields
@@ -249,9 +249,9 @@ def _safe_filename(name: str, default: str) -> str:
 # Public, unauthenticated tools
 # --------------------------------------------------------------------------- #
 @mcp.tool(
-    name="supoclip_health",
+    name="Clipify_health",
     annotations={
-        "title": "SupoClip Health & Config",
+        "title": "Clipify Health & Config",
         "readOnlyHint": True,
         "destructiveHint": False,
         "idempotentHint": True,
@@ -259,8 +259,8 @@ def _safe_filename(name: str, default: str) -> str:
     },
 )
 @tool_errors
-async def supoclip_health() -> str:
-    """Report SupoClip API status and how this MCP server is configured.
+async def Clipify_health() -> str:
+    """Report Clipify API status and how this MCP server is configured.
 
     Use this first to confirm connectivity and that credentials are set up. It
     requires no authentication and reveals no secrets.
@@ -289,7 +289,7 @@ async def supoclip_health() -> str:
 
 
 @mcp.tool(
-    name="supoclip_list_caption_templates",
+    name="Clipify_list_caption_templates",
     annotations={
         "title": "List Caption Templates",
         "readOnlyHint": True,
@@ -299,11 +299,11 @@ async def supoclip_health() -> str:
     },
 )
 @tool_errors
-async def supoclip_list_caption_templates() -> str:
+async def Clipify_list_caption_templates() -> str:
     """List the caption/subtitle templates available for clip generation.
 
     Each template id (e.g. ``default``, ``hormozi``, ``mrbeast``) can be passed
-    as ``caption_template`` to ``supoclip_create_clip_task``. No auth required.
+    as ``caption_template`` to ``Clipify_create_clip_task``. No auth required.
 
     Returns:
         str: JSON ``{"templates": [{"id", "name", "description", "animation",
@@ -314,7 +314,7 @@ async def supoclip_list_caption_templates() -> str:
 
 
 @mcp.tool(
-    name="supoclip_list_transitions",
+    name="Clipify_list_transitions",
     annotations={
         "title": "List Transition Effects",
         "readOnlyHint": True,
@@ -324,7 +324,7 @@ async def supoclip_list_caption_templates() -> str:
     },
 )
 @tool_errors
-async def supoclip_list_transitions() -> str:
+async def Clipify_list_transitions() -> str:
     """List available video transition effects. No auth required.
 
     Returns:
@@ -335,7 +335,7 @@ async def supoclip_list_transitions() -> str:
 
 
 @mcp.tool(
-    name="supoclip_broll_status",
+    name="Clipify_broll_status",
     annotations={
         "title": "B-roll Availability",
         "readOnlyHint": True,
@@ -345,7 +345,7 @@ async def supoclip_list_transitions() -> str:
     },
 )
 @tool_errors
-async def supoclip_broll_status() -> str:
+async def Clipify_broll_status() -> str:
     """Report whether automatic B-roll overlays are configured on the backend.
 
     If ``configured`` is false, passing ``include_broll=true`` when creating a
@@ -362,7 +362,7 @@ async def supoclip_broll_status() -> str:
 # Authenticated tools — discovery & account
 # --------------------------------------------------------------------------- #
 @mcp.tool(
-    name="supoclip_list_fonts",
+    name="Clipify_list_fonts",
     annotations={
         "title": "List Fonts",
         "readOnlyHint": True,
@@ -372,11 +372,11 @@ async def supoclip_broll_status() -> str:
     },
 )
 @tool_errors
-async def supoclip_list_fonts() -> str:
+async def Clipify_list_fonts() -> str:
     """List subtitle fonts available to the authenticated account.
 
     Any returned ``name`` can be used as ``font_family`` in
-    ``supoclip_create_clip_task``. Requires authentication.
+    ``Clipify_create_clip_task``. Requires authentication.
 
     Returns:
         str: JSON ``{"fonts": [{"name", "display_name", ...}]}``.
@@ -386,7 +386,7 @@ async def supoclip_list_fonts() -> str:
 
 
 @mcp.tool(
-    name="supoclip_billing_summary",
+    name="Clipify_billing_summary",
     annotations={
         "title": "Billing & Usage Summary",
         "readOnlyHint": True,
@@ -396,7 +396,7 @@ async def supoclip_list_fonts() -> str:
     },
 )
 @tool_errors
-async def supoclip_billing_summary() -> str:
+async def Clipify_billing_summary() -> str:
     """Get the authenticated account's plan, usage and remaining minutes.
 
     Plans are metered in minutes of source video per month; a video uses its
@@ -418,7 +418,7 @@ async def supoclip_billing_summary() -> str:
 # Authenticated tools — task lifecycle
 # --------------------------------------------------------------------------- #
 @mcp.tool(
-    name="supoclip_create_clip_task",
+    name="Clipify_create_clip_task",
     annotations={
         "title": "Create Clipping Task",
         "readOnlyHint": False,
@@ -428,7 +428,7 @@ async def supoclip_billing_summary() -> str:
     },
 )
 @tool_errors
-async def supoclip_create_clip_task(
+async def Clipify_create_clip_task(
     url: str = "",
     title: str = "",
     processing_mode: str = "fast",
@@ -447,14 +447,14 @@ async def supoclip_create_clip_task(
     part_count: int = 0,
     instructions: str = "",
 ) -> str:
-    """Create a SupoClip task that downloads a video and generates viral short clips.
+    """Create a Clipify task that downloads a video and generates viral short clips.
 
     Processing is asynchronous: this returns immediately with a ``task_id``.
-    Track progress with ``supoclip_wait_for_task`` or ``supoclip_get_task``, then
-    fetch results with ``supoclip_list_clips`` / ``supoclip_download_clip``.
+    Track progress with ``Clipify_wait_for_task`` or ``Clipify_get_task``, then
+    fetch results with ``Clipify_list_clips`` / ``Clipify_download_clip``.
 
     Requires authentication. On the hosted service a paid plan / available quota
-    may be required (a 402 error indicates this — see ``supoclip_billing_summary``).
+    may be required (a 402 error indicates this — see ``Clipify_billing_summary``).
 
     workflow: what to make. "highlights" (default) = the best standalone clips.
     "series" = one story split into ordered, numbered parts (Part 1..N) cut on
@@ -469,7 +469,7 @@ async def supoclip_create_clip_task(
     or "focus on the hiring story".
 
     Workflows other than plain highlights may not be enabled for every account
-    (403 WORKFLOW_NOT_AVAILABLE); ``supoclip_list_workflows`` tells you first.
+    (403 WORKFLOW_NOT_AVAILABLE); ``Clipify_list_workflows`` tells you first.
     A failed workflow task ends with ``status: error`` and an ``error_code``
     (e.g. ``topic_not_found``, with ``workflow_plan.error.details.suggested_topics``),
     and its minutes are refunded.
@@ -501,10 +501,10 @@ async def supoclip_create_clip_task(
     """
     cleaned_url = (url or "").strip()
     if len(cleaned_url) < 4:
-        raise SupoClipError("url is required. Pass a YouTube URL or direct video URL.")
+        raise ClipifyError("url is required. Pass a YouTube URL or direct video URL.")
 
     if clip_length not in {"auto", "short", "medium", "long"}:
-        raise SupoClipError("clip_length must be auto, short, medium, or long")
+        raise ClipifyError("clip_length must be auto, short, medium, or long")
 
     workflow_fields = _workflow_fields(workflow, topic, part_count, instructions)
 
@@ -547,7 +547,7 @@ async def supoclip_create_clip_task(
 
 
 @mcp.tool(
-    name="supoclip_create_clip",
+    name="Clipify_create_clip",
     annotations={
         "title": "Create Clip",
         "readOnlyHint": False,
@@ -557,19 +557,19 @@ async def supoclip_create_clip_task(
     },
 )
 @tool_errors
-async def supoclip_create_clip(url: str = "") -> str:
-    """Create a SupoClip highlights task from a YouTube or direct video URL.
+async def Clipify_create_clip(url: str = "") -> str:
+    """Create a Clipify highlights task from a YouTube or direct video URL.
 
     This is a compatibility alias for clients that fail to pass arguments to
-    the richer ``supoclip_create_clip_task`` tool. Pass the video URL in the
+    the richer ``Clipify_create_clip_task`` tool. Pass the video URL in the
     ``url`` argument. For a series, topic clips, a recap or a trailer, use
-    ``supoclip_create_clip_task`` with ``workflow``.
+    ``Clipify_create_clip_task`` with ``workflow``.
     """
-    return await supoclip_create_clip_task(url=url)
+    return await Clipify_create_clip_task(url=url)
 
 
 @mcp.tool(
-    name="supoclip_list_workflows",
+    name="Clipify_list_workflows",
     annotations={
         "title": "List Workflows",
         "readOnlyHint": True,
@@ -579,11 +579,11 @@ async def supoclip_create_clip(url: str = "") -> str:
     },
 )
 @tool_errors
-async def supoclip_list_workflows() -> str:
+async def Clipify_list_workflows() -> str:
     """List what this account can make and each workflow's limits.
 
     Call this before passing a ``workflow`` other than ``highlights`` (or any
-    ``instructions``) to ``supoclip_create_clip_task``. When ``enabled`` is
+    ``instructions``) to ``Clipify_create_clip_task``. When ``enabled`` is
     false, only plain highlights without instructions are available. Requires
     authentication.
 
@@ -600,7 +600,7 @@ async def supoclip_list_workflows() -> str:
 
 
 @mcp.tool(
-    name="supoclip_list_tasks",
+    name="Clipify_list_tasks",
     annotations={
         "title": "List Tasks",
         "readOnlyHint": True,
@@ -610,7 +610,7 @@ async def supoclip_list_workflows() -> str:
     },
 )
 @tool_errors
-async def supoclip_list_tasks(
+async def Clipify_list_tasks(
     limit: Annotated[
         int,
         Field(default=50, description="Maximum number of tasks to return.", ge=1, le=200),
@@ -631,7 +631,7 @@ async def supoclip_list_tasks(
 
 
 @mcp.tool(
-    name="supoclip_get_task",
+    name="Clipify_get_task",
     annotations={
         "title": "Get Task",
         "readOnlyHint": True,
@@ -641,7 +641,7 @@ async def supoclip_list_tasks(
     },
 )
 @tool_errors
-async def supoclip_get_task(
+async def Clipify_get_task(
     task_id: Annotated[str, Field(description="The task id returned by create_clip_task.", min_length=1)],
 ) -> str:
     """Get a task's status, progress and generated clips.
@@ -665,7 +665,7 @@ async def supoclip_get_task(
 
 
 @mcp.tool(
-    name="supoclip_wait_for_task",
+    name="Clipify_wait_for_task",
     annotations={
         "title": "Wait For Task",
         "readOnlyHint": True,
@@ -675,7 +675,7 @@ async def supoclip_get_task(
     },
 )
 @tool_errors
-async def supoclip_wait_for_task(
+async def Clipify_wait_for_task(
     task_id: Annotated[str, Field(description="The task id to wait on.", min_length=1)],
     timeout_seconds: Annotated[
         int,
@@ -689,7 +689,7 @@ async def supoclip_wait_for_task(
 ) -> str:
     """Poll a task until it finishes (completed/error/cancelled) or times out.
 
-    Convenience wrapper around ``supoclip_get_task`` for the asynchronous
+    Convenience wrapper around ``Clipify_get_task`` for the asynchronous
     pipeline. Reports progress while waiting. Requires authentication.
 
     Args:
@@ -737,7 +737,7 @@ async def supoclip_wait_for_task(
 
 
 @mcp.tool(
-    name="supoclip_list_clips",
+    name="Clipify_list_clips",
     annotations={
         "title": "List Clips",
         "readOnlyHint": True,
@@ -747,7 +747,7 @@ async def supoclip_wait_for_task(
     },
 )
 @tool_errors
-async def supoclip_list_clips(
+async def Clipify_list_clips(
     task_id: Annotated[str, Field(description="The task id whose clips to list.", min_length=1)],
 ) -> str:
     """List the generated clips for a task. Requires authentication.
@@ -767,7 +767,7 @@ async def supoclip_list_clips(
 # Authenticated tools — retrieval (download to disk)
 # --------------------------------------------------------------------------- #
 @mcp.tool(
-    name="supoclip_download_clip",
+    name="Clipify_download_clip",
     annotations={
         "title": "Download Clip",
         "readOnlyHint": True,
@@ -777,9 +777,9 @@ async def supoclip_list_clips(
     },
 )
 @tool_errors
-async def supoclip_download_clip(
+async def Clipify_download_clip(
     task_id: Annotated[str, Field(description="The task id that owns the clip.", min_length=1)],
-    clip_id: Annotated[str, Field(description="The clip id (from supoclip_list_clips).", min_length=1)],
+    clip_id: Annotated[str, Field(description="The clip id (from Clipify_list_clips).", min_length=1)],
     filename: Annotated[
         Optional[str],
         Field(default=None, description="Optional output filename; '.mp4' is enforced.", max_length=200),
@@ -787,8 +787,8 @@ async def supoclip_download_clip(
 ) -> str:
     """Download a generated clip's MP4 to the local download directory.
 
-    The file is saved under ``SUPOCLIP_DOWNLOAD_DIR`` (default
-    ``./supoclip-downloads``). Requires authentication and task ownership.
+    The file is saved under ``Clipify_DOWNLOAD_DIR`` (default
+    ``./Clipify-downloads``). Requires authentication and task ownership.
 
     Args:
         task_id: The owning task id.
@@ -807,7 +807,7 @@ async def supoclip_download_clip(
 
 
 @mcp.tool(
-    name="supoclip_export_clip",
+    name="Clipify_export_clip",
     annotations={
         "title": "Export Clip (Platform Preset)",
         "readOnlyHint": True,
@@ -817,7 +817,7 @@ async def supoclip_download_clip(
     },
 )
 @tool_errors
-async def supoclip_export_clip(
+async def Clipify_export_clip(
     task_id: Annotated[str, Field(description="The task id that owns the clip.", min_length=1)],
     clip_id: Annotated[str, Field(description="The clip id to export.", min_length=1)],
     preset: Annotated[
@@ -832,7 +832,7 @@ async def supoclip_export_clip(
     """Export a clip re-encoded for a social platform and save the MP4 locally.
 
     Presets (tiktok/reels/shorts) produce 1080x1920 H.264 with platform-tuned
-    bitrates. Saved under ``SUPOCLIP_DOWNLOAD_DIR``. Requires authentication.
+    bitrates. Saved under ``Clipify_DOWNLOAD_DIR``. Requires authentication.
 
     Args:
         task_id: The owning task id.
@@ -857,7 +857,7 @@ async def supoclip_export_clip(
 # Authenticated tools — management
 # --------------------------------------------------------------------------- #
 @mcp.tool(
-    name="supoclip_cancel_task",
+    name="Clipify_cancel_task",
     annotations={
         "title": "Cancel Task",
         "readOnlyHint": False,
@@ -867,7 +867,7 @@ async def supoclip_export_clip(
     },
 )
 @tool_errors
-async def supoclip_cancel_task(
+async def Clipify_cancel_task(
     task_id: Annotated[str, Field(description="The task id to cancel.", min_length=1)],
 ) -> str:
     """Cancel a queued or processing task. Requires authentication.
@@ -883,7 +883,7 @@ async def supoclip_cancel_task(
 
 
 @mcp.tool(
-    name="supoclip_resume_task",
+    name="Clipify_resume_task",
     annotations={
         "title": "Retry Generation",
         "readOnlyHint": False,
@@ -893,7 +893,7 @@ async def supoclip_cancel_task(
     },
 )
 @tool_errors
-async def supoclip_resume_task(
+async def Clipify_resume_task(
     task_id: Annotated[str, Field(description="The task id to retry.", min_length=1)],
 ) -> str:
     """Re-queue a cancelled or errored task for processing. Requires authentication.
@@ -909,7 +909,7 @@ async def supoclip_resume_task(
 
 
 @mcp.tool(
-    name="supoclip_delete_task",
+    name="Clipify_delete_task",
     annotations={
         "title": "Delete Task",
         "readOnlyHint": False,
@@ -919,7 +919,7 @@ async def supoclip_resume_task(
     },
 )
 @tool_errors
-async def supoclip_delete_task(
+async def Clipify_delete_task(
     task_id: Annotated[str, Field(description="The task id to delete.", min_length=1)],
 ) -> str:
     """Permanently delete a task and all of its generated clips.

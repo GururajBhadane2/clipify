@@ -8,7 +8,7 @@
  */
 export const CREATOR_OFFER_TEXT = "20% off your first 3 months";
 
-const STORAGE_KEY = "supoclip:creator-code:v1";
+const STORAGE_KEY = "Clipify:creator-code:v1";
 const TTL_MS = 90 * 24 * 60 * 60 * 1000;
 
 type StoredCode = { code: string; saved_at: string };

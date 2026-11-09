@@ -28,7 +28,7 @@ It is styled in a **OLED Deep Black** canvas with **Normal Red** brand accents, 
 4. Copy your key (starts with `sk-...`).
 
 ### Step 2: Configure `.env` in the repository
-Open `supoclip-main/.env` (or copy from `.env.example` if not already present):
+Open `Clipify-main/.env` (or copy from `.env.example` if not already present):
 
 ```env
 # ==============================================
@@ -77,9 +77,9 @@ Since video clipping requires **FFmpeg**, **PostgreSQL**, and **Redis**, the eas
 
 1. Download and install [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/) (ensure WSL 2 backend is enabled).
 2. Open Docker Desktop.
-3. Open PowerShell in `supoclip-main`:
+3. Open PowerShell in `Clipify-main`:
    ```powershell
-   cd supoclip-main
+   cd Clipify-main
    docker compose up -d --build
    ```
 4. Once built and running:
@@ -112,7 +112,7 @@ ffmpeg -version
 
 #### 2. Start the Backend API & Worker
 ```bash
-cd supoclip-main/backend
+cd Clipify-main/backend
 
 # Create virtual environment
 python -m venv .venv
@@ -136,7 +136,7 @@ python src/worker_main.py
 
 #### 3. Start the Next.js Frontend
 ```bash
-cd supoclip-main/frontend
+cd Clipify-main/frontend
 
 # Install dependencies
 pnpm install

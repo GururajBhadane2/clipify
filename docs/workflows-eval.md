@@ -48,7 +48,7 @@ The exit code is 1 when any hard metric fails.
 | Name | Source | Why |
 |---|---|---|
 | `01`–`10` | `output/clip-quality-20261027/sources/` | English formats (interview, podcast, reaction, explainer, sports); `07` is German news with four speakers; `05` (1.6 min) must be rejected for series, recap and trailer |
-| `pr163` | `~/.cache/supoclip-pr163/uploads/` | Hindi/English mix, 57 min, no language code, has video |
+| `pr163` | `~/.cache/Clipify-pr163/uploads/` | Hindi/English mix, 57 min, no language code, has video |
 | `price`, `ton` | `output/article-clips-20261026/*/uploads/` | Whisper, no speakers, have video |
 | `vlz` | `output/overlap-local-224/generation/uploads/` | Whisper, has video |
 | `synthetic3h` | built | 02 + 04 + 10 + pr163 stitched (about 2.5 h): long mode, map-reduce, timeouts |

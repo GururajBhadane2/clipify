@@ -13,8 +13,8 @@ import { dueTours, FEATURE_TOURS, TOUR_COOLDOWN_MS, type FeatureTour, type TourS
 import type { Workflow } from "@/lib/workflows";
 import { WorkflowGlyph } from "@/components/workflow-picker";
 
-const LAST_SHOWN_KEY = "supoclip.featureTour.lastShown";
-const SEEN_KEY = "supoclip.featureTour.seen";
+const LAST_SHOWN_KEY = "Clipify.featureTour.lastShown";
+const SEEN_KEY = "Clipify.featureTour.seen";
 const START_DELAY_MS = 900;
 
 function readLocal(key: string): string | null {

@@ -26,9 +26,9 @@ export type Attribution = Partial<Record<AttributionField, string>> & {
   captured_at: string;
 };
 
-export const ATTRIBUTION_STORAGE_KEY = "supoclip:attribution:v1";
-export const accountAttributionKey = (userId: string) => `supoclip:attribution:account:${userId}`;
-export const pendingAttributionKey = (userId: string) => `supoclip:attribution:pending:${userId}`;
+export const ATTRIBUTION_STORAGE_KEY = "Clipify:attribution:v1";
+export const accountAttributionKey = (userId: string) => `Clipify:attribution:account:${userId}`;
+export const pendingAttributionKey = (userId: string) => `Clipify:attribution:pending:${userId}`;
 export const ATTRIBUTION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
 
 const MAX_FIELD_LENGTH: Record<AttributionField, number> = {

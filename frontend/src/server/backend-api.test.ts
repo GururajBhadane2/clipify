@@ -54,11 +54,11 @@ describe("client platform", () => {
     ["web", undefined],
     ["android", undefined],
     [null, undefined],
-  ])("forwards x-supoclip-client %j as %j", async (sent, forwarded) => {
-    incomingHeaders.current = new Headers(sent === null ? {} : { "x-supoclip-client": sent });
+  ])("forwards x-Clipify-client %j as %j", async (sent, forwarded) => {
+    incomingHeaders.current = new Headers(sent === null ? {} : { "x-Clipify-client": sent });
     const fetchMock = vi.fn().mockResolvedValue(new Response("{}"));
     vi.stubGlobal("fetch", fetchMock);
     await fetchBackend("/tasks/workflows", { userId: "owner" });
-    expect(fetchMock.mock.calls[0][1].headers["x-supoclip-client"]).toBe(forwarded);
+    expect(fetchMock.mock.calls[0][1].headers["x-Clipify-client"]).toBe(forwarded);
   });
 });

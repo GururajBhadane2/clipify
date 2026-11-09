@@ -129,11 +129,11 @@ class ReplicatedMediaClient:
                     client.delete_object(Bucket=bucket, Key=manifest["key"])
                 else:
                     extra = dict(manifest.get("extra", {}))
-                    extra["Metadata"] = {**extra.get("Metadata", {}), "supoclip-sha256": manifest["sha256"]}
+                    extra["Metadata"] = {**extra.get("Metadata", {}), "Clipify-sha256": manifest["sha256"]}
                     client.upload_file(str(directory / manifest["payload"]), bucket, manifest["key"],
                                        ExtraArgs=extra, Config=TRANSFER)
                     head = client.head_object(Bucket=bucket, Key=manifest["key"])
-                    if head["ContentLength"] != manifest["size"] or head.get("Metadata", {}).get("supoclip-sha256") != manifest["sha256"]:
+                    if head["ContentLength"] != manifest["size"] or head.get("Metadata", {}).get("Clipify-sha256") != manifest["sha256"]:
                         raise OSError("Replica verification failed")
                 manifest["pending"].remove(name)
                 self._save(directory, manifest)
@@ -396,16 +396,16 @@ class ReplicatedMediaClient:
                 if exc.response["Error"]["Code"] not in MISSING:
                     raise
                 target = None
-            digest = source.get("Metadata", {}).get("supoclip-sha256")
+            digest = source.get("Metadata", {}).get("Clipify-sha256")
             same = target and target["ContentLength"] == source["ContentLength"] and (
-                (digest and target.get("Metadata", {}).get("supoclip-sha256") == digest)
-                or target.get("Metadata", {}).get("supoclip-source-etag") == source["ETag"]
+                (digest and target.get("Metadata", {}).get("Clipify-sha256") == digest)
+                or target.get("Metadata", {}).get("Clipify-source-etag") == source["ETag"]
             )
             if same:
                 if verify:
                     if not self.replica_matches({"Key": key, **source}, {"Key": key, **target}):
-                        self._verify_remote(fallback, target_bucket, key, target["Metadata"]["supoclip-sha256"])
-                        self._record_verification(directory, key, source, target, target["Metadata"]["supoclip-sha256"])
+                        self._verify_remote(fallback, target_bucket, key, target["Metadata"]["Clipify-sha256"])
+                        self._record_verification(directory, key, source, target, target["Metadata"]["Clipify-sha256"])
                 return "verified" if verify else "unchanged"
             temporary = directory / (uuid.uuid4().hex + ".part")
             try:
@@ -420,7 +420,7 @@ class ReplicatedMediaClient:
                 if primary.head_object(Bucket=source_bucket, Key=key)["ETag"] != source["ETag"]:
                     return "changed"
                 extra = {k: source[k] for k in ("ContentType", "ContentDisposition", "CacheControl", "Metadata") if k in source}
-                extra["Metadata"] = {**extra.get("Metadata", {}), "supoclip-source-etag": source["ETag"]}
+                extra["Metadata"] = {**extra.get("Metadata", {}), "Clipify-source-etag": source["ETag"]}
                 manifest = self._stage(directory, temporary, key, extra, pending=["fallback"], adopt=True)
                 _, error = self._apply(directory, manifest)
                 if manifest["pending"]:

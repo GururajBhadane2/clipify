@@ -74,7 +74,7 @@ See [local testing instructions](testing-local.md),
 [real API/worker runner](../backend/tests/live/run_local_workflows.py).
 
 Session logs and rendered evidence are retained on this workstation under
-`/tmp/supoclip-full-test/`. The `evidence/` directory includes desktop/mobile
+`/tmp/Clipify-full-test/`. The `evidence/` directory includes desktop/mobile
 screenshots and browser/server MP4 exports. `caption-cache-1.png` shows timed
 captions on the repeated YouTube run. Temporary services were stopped after testing.
 No commits or deployments were made.

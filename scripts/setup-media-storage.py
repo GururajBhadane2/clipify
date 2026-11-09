@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create SupoClip's private media bucket and a bucket-scoped runtime identity.
+"""Create Clipify's private media bucket and a bucket-scoped runtime identity.
 
 Run with backend/.venv/bin/python. Administrative access comes from aws login;
 runtime keys are written only to the requested private file, never stdout.
@@ -20,7 +20,7 @@ def main():
     parser.add_argument("--region", default="eu-central-1")
     parser.add_argument("--bucket")
     parser.add_argument("--profile", default="default")
-    parser.add_argument("--iam-user", default="supoclip-media-storage")
+    parser.add_argument("--iam-user", default="Clipify-media-storage")
     parser.add_argument("--origin", action="append", default=[])
     parser.add_argument("--credentials-file", type=Path)
     parser.add_argument("--apply", action="store_true")
@@ -31,8 +31,8 @@ def main():
     session = boto3.Session(aws_access_key_id=credentials["AccessKeyId"], aws_secret_access_key=credentials["SecretAccessKey"],
         aws_session_token=credentials.get("SessionToken"), region_name=args.region)
     account = session.client("sts").get_caller_identity()["Account"]
-    bucket = args.bucket or f"supoclip-media-{account}"
-    origins = args.origin or ["https://supoclip.com", "https://www.supoclip.com", "http://localhost:3107"]
+    bucket = args.bucket or f"Clipify-media-{account}"
+    origins = args.origin or ["https://Clipify.com", "https://www.Clipify.com", "http://localhost:3107"]
     print(json.dumps({"bucket": bucket, "region": args.region, "prefix": "media", "origins": origins,
         "iam_user": args.iam_user, "incomplete_multipart_expiry_days": 1, "apply": args.apply}))
     if not args.apply:
@@ -66,11 +66,11 @@ def main():
         "AbortIncompleteMultipartUpload": {"DaysAfterInitiation": 1}}]})
     iam = session.client("iam")
     try:
-        iam.create_user(UserName=args.iam_user, Tags=[{"Key": "Application", "Value": "SupoClip"}])
+        iam.create_user(UserName=args.iam_user, Tags=[{"Key": "Application", "Value": "Clipify"}])
     except ClientError as exc:
         if exc.response["Error"]["Code"] != "EntityAlreadyExists":
             raise
-    iam.put_user_policy(UserName=args.iam_user, PolicyName="SupoClipMediaOnly", PolicyDocument=json.dumps({
+    iam.put_user_policy(UserName=args.iam_user, PolicyName="ClipifyMediaOnly", PolicyDocument=json.dumps({
         "Version": "2012-10-17", "Statement": [
             {"Effect": "Allow", "Action": "s3:GetBucketLocation", "Resource": arn},
             {"Effect": "Allow", "Action": "s3:ListBucket", "Resource": arn,

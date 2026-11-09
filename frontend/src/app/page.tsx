@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description: t("metadata.openGraphDescription"),
       url: siteUrl,
-      siteName: "SupoClip",
+      siteName: "Clipify",
       type: "website",
     },
     twitter: {
@@ -47,16 +47,16 @@ export default async function HomePage() {
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      name: "SupoClip",
+      name: "Clipify",
       legalName: COMPANY_NAME,
       url: siteUrl,
       logo: `${siteUrl}/logo.png`,
-      sameAs: ["https://github.com/FujiwaraChoki/supoclip", APP_STORE_URL],
+      sameAs: ["https://github.com/FujiwaraChoki/Clipify", APP_STORE_URL],
     },
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      name: "SupoClip",
+      name: "Clipify",
       applicationCategory: "MultimediaApplication",
       operatingSystem: "Web, Docker",
       url: siteUrl,
@@ -78,7 +78,7 @@ export default async function HomePage() {
     {
       "@context": "https://schema.org",
       "@type": "MobileApplication",
-      name: "SupoClip",
+      name: "Clipify",
       applicationCategory: "MultimediaApplication",
       operatingSystem: "iOS",
       url: APP_STORE_URL,
@@ -93,7 +93,7 @@ export default async function HomePage() {
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      name: "SupoClip",
+      name: "Clipify",
       url: siteUrl,
       description: t("metadata.structured.website"),
     },

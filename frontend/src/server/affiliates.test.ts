@@ -14,7 +14,7 @@ describe("validateSlug", () => {
     ["spaces", "ma ya"],
     ["symbols", "maya!"],
     ["reserved", "admin"],
-    ["brand prefix", "supoclip-deals"],
+    ["brand prefix", "Clipify-deals"],
     ["not a string", 42],
   ])("rejects %s", (_label, slug) => {
     expect(validateSlug(slug).ok).toBe(false);

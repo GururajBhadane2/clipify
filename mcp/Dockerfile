@@ -22,4 +22,4 @@ RUN uv sync --frozen --no-dev
 
 EXPOSE 9100
 
-CMD ["/app/.venv/bin/supoclip-mcp"]
+CMD ["/app/.venv/bin/clipify-mcp"]

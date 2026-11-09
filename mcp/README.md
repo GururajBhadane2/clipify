@@ -1,39 +1,39 @@
-# SupoClip MCP Server
+# Clipify MCP Server
 
 A [Model Context Protocol](https://modelcontextprotocol.io) server for
-[SupoClip](https://supoclip.com) — turn long-form videos (YouTube links or
+[Clipify](https://Clipify.com) — turn long-form videos (YouTube links or
 direct URLs) into short, vertical, subtitled viral clips from any MCP client
 (Claude Desktop, Claude Code, Cursor, etc.).
 
-By default it talks to the **official hosted SupoClip API** at
-`https://api.supoclip.com`. Point it at your own deployment by setting
-`SUPOCLIP_API_URL`.
+By default it talks to the **official hosted Clipify API** at
+`https://api.Clipify.com`. Point it at your own deployment by setting
+`Clipify_API_URL`.
 
 ## What it can do
 
 | Tool | Auth | Description |
 |------|:----:|-------------|
-| `supoclip_health` | – | API status + how this server is configured |
-| `supoclip_list_caption_templates` | – | Available caption styles (default, hormozi, mrbeast, …) |
-| `supoclip_list_transitions` | – | Available transition effects |
-| `supoclip_broll_status` | – | Whether B-roll overlays are configured |
-| `supoclip_list_fonts` | ✓ | Subtitle fonts available to your account |
-| `supoclip_billing_summary` | ✓ | Plan, usage and remaining quota |
-| `supoclip_list_workflows` | ✓ | What your account can make (highlights, series, topic, recap, trailer) and each one's limits |
-| `supoclip_create_clip_task` | ✓ | Start clipping a video → returns a `task_id`; `workflow` picks what to make |
-| `supoclip_list_tasks` | ✓ | List your tasks |
-| `supoclip_get_task` | ✓ | Task status, progress and clips |
-| `supoclip_wait_for_task` | ✓ | Poll until a task finishes |
-| `supoclip_list_clips` | ✓ | List a task's generated clips |
-| `supoclip_download_clip` | ✓ | Save a clip's MP4 to disk |
-| `supoclip_export_clip` | ✓ | Re-encode + save with a platform preset (tiktok/reels/shorts) |
-| `supoclip_cancel_task` / `supoclip_resume_task` / `supoclip_delete_task` | ✓ | Manage tasks |
+| `Clipify_health` | – | API status + how this server is configured |
+| `Clipify_list_caption_templates` | – | Available caption styles (default, hormozi, mrbeast, …) |
+| `Clipify_list_transitions` | – | Available transition effects |
+| `Clipify_broll_status` | – | Whether B-roll overlays are configured |
+| `Clipify_list_fonts` | ✓ | Subtitle fonts available to your account |
+| `Clipify_billing_summary` | ✓ | Plan, usage and remaining quota |
+| `Clipify_list_workflows` | ✓ | What your account can make (highlights, series, topic, recap, trailer) and each one's limits |
+| `Clipify_create_clip_task` | ✓ | Start clipping a video → returns a `task_id`; `workflow` picks what to make |
+| `Clipify_list_tasks` | ✓ | List your tasks |
+| `Clipify_get_task` | ✓ | Task status, progress and clips |
+| `Clipify_wait_for_task` | ✓ | Poll until a task finishes |
+| `Clipify_list_clips` | ✓ | List a task's generated clips |
+| `Clipify_download_clip` | ✓ | Save a clip's MP4 to disk |
+| `Clipify_export_clip` | ✓ | Re-encode + save with a platform preset (tiktok/reels/shorts) |
+| `Clipify_cancel_task` / `Clipify_resume_task` / `Clipify_delete_task` | ✓ | Manage tasks |
 
 Tools marked ✓ require an API key (or self-host credentials, see below).
 
 ## Getting an API key
 
-1. Sign in at [supoclip.com](https://supoclip.com).
+1. Sign in at [Clipify.com](https://Clipify.com).
 2. Go to **Settings → API Keys**.
 3. Create a key and copy it (it's shown only once). It looks like `sk_…`.
 
@@ -43,22 +43,22 @@ All configuration is via environment variables:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `SUPOCLIP_API_KEY` | – | Your API key (recommended auth). |
-| `SUPOCLIP_API_URL` | `https://api.supoclip.com` | Backend base URL. Set for self-hosting. |
-| `SUPOCLIP_DOWNLOAD_DIR` | `./supoclip-downloads` | Where downloaded/exported clips are written. |
-| `SUPOCLIP_TIMEOUT` | `60` | HTTP timeout (seconds) for non-download requests. |
-| `SUPOCLIP_USER_ID` | – | Self-host only: authenticate by user id (see below). |
-| `SUPOCLIP_AUTH_SECRET` | – | Self-host only: backend `BACKEND_AUTH_SECRET` for HMAC signing. |
+| `Clipify_API_KEY` | – | Your API key (recommended auth). |
+| `Clipify_API_URL` | `https://api.Clipify.com` | Backend base URL. Set for self-hosting. |
+| `Clipify_DOWNLOAD_DIR` | `./Clipify-downloads` | Where downloaded/exported clips are written. |
+| `Clipify_TIMEOUT` | `60` | HTTP timeout (seconds) for non-download requests. |
+| `Clipify_USER_ID` | – | Self-host only: authenticate by user id (see below). |
+| `Clipify_AUTH_SECRET` | – | Self-host only: backend `BACKEND_AUTH_SECRET` for HMAC signing. |
 
 ### Self-hosting auth
 
 If you run your own backend you have three options:
 
-- **API key** (same as hosted): create a key and set `SUPOCLIP_API_KEY`.
-- **Signed headers**: set `SUPOCLIP_USER_ID` + `SUPOCLIP_AUTH_SECRET` (your
+- **API key** (same as hosted): create a key and set `Clipify_API_KEY`.
+- **Signed headers**: set `Clipify_USER_ID` + `Clipify_AUTH_SECRET` (your
   backend's `BACKEND_AUTH_SECRET`).
 - **Unsigned**: if the backend runs with `ALLOW_UNSIGNED_BACKEND_AUTH=true`,
-  just set `SUPOCLIP_USER_ID`.
+  just set `Clipify_USER_ID`.
 
 Auth precedence is: API key → signed headers → unsigned user id.
 
@@ -68,38 +68,38 @@ Requires Python 3.10+. With [uv](https://docs.astral.sh/uv/):
 
 ```bash
 cd mcp
-uv run supoclip-mcp        # runs the stdio server
+uv run Clipify-mcp        # runs the stdio server
 ```
 
 Or install into the current environment:
 
 ```bash
 pip install -e .
-supoclip-mcp
+Clipify-mcp
 ```
 
 ## Hosted SSE server
 
 For clients that add a remote MCP URL, run the server over SSE and require a
-SupoClip API key as the client Bearer token:
+Clipify API key as the client Bearer token:
 
 ```bash
-SUPOCLIP_API_URL=https://api.supoclip.com \
-SUPOCLIP_MCP_TRANSPORT=sse \
-SUPOCLIP_MCP_HOST=0.0.0.0 \
-SUPOCLIP_MCP_PORT=9100 \
-SUPOCLIP_MCP_PUBLIC_URL=https://mcp.supoclip.com \
-SUPOCLIP_MCP_REQUIRE_BEARER_AUTH=true \
-supoclip-mcp
+Clipify_API_URL=https://api.Clipify.com \
+Clipify_MCP_TRANSPORT=sse \
+Clipify_MCP_HOST=0.0.0.0 \
+Clipify_MCP_PORT=9100 \
+Clipify_MCP_PUBLIC_URL=https://mcp.Clipify.com \
+Clipify_MCP_REQUIRE_BEARER_AUTH=true \
+Clipify-mcp
 ```
 
 Then configure the MCP client with:
 
 ```text
-Server URL: https://mcp.supoclip.com/sse
+Server URL: https://mcp.Clipify.com/sse
 Transport: SSE
 Authentication: Bearer Token
-Token: sk_your_supoclip_api_key
+Token: sk_your_Clipify_api_key
 ```
 
 With Docker Compose, the `mcp` service runs this mode by default and binds to
@@ -113,29 +113,29 @@ Add to your MCP client config (e.g. `claude_desktop_config.json`, or via
 ```json
 {
   "mcpServers": {
-    "supoclip": {
+    "Clipify": {
       "command": "uv",
-      "args": ["--directory", "/absolute/path/to/supoclip/mcp", "run", "supoclip-mcp"],
+      "args": ["--directory", "/absolute/path/to/Clipify/mcp", "run", "Clipify-mcp"],
       "env": {
-        "SUPOCLIP_API_KEY": "sk_your_key_here"
+        "Clipify_API_KEY": "sk_your_key_here"
       }
     }
   }
 }
 ```
 
-For a self-hosted backend, add `"SUPOCLIP_API_URL": "http://localhost:8000"` to `env`.
+For a self-hosted backend, add `"Clipify_API_URL": "http://localhost:8000"` to `env`.
 
 With Claude Code:
 
 ```bash
-claude mcp add supoclip -e SUPOCLIP_API_KEY=sk_your_key_here \
-  -- uv --directory /absolute/path/to/supoclip/mcp run supoclip-mcp
+claude mcp add Clipify -e Clipify_API_KEY=sk_your_key_here \
+  -- uv --directory /absolute/path/to/Clipify/mcp run Clipify-mcp
 ```
 
 ## Workflows
 
-`supoclip_create_clip_task` makes highlights by default. Pass `workflow` for
+`Clipify_create_clip_task` makes highlights by default. Pass `workflow` for
 something else:
 
 | `workflow` | Makes | `clip_length` sets |
@@ -157,35 +157,35 @@ with the same rules as the API; `topic` with a workflow other than `topic`, or
 `part_count` with a workflow other than `series`, is an error rather than
 silently ignored.
 
-Workflows may be gated per account: call `supoclip_list_workflows` first. When
+Workflows may be gated per account: call `Clipify_list_workflows` first. When
 it reports `enabled: false`, only plain highlights without instructions work
 (otherwise the API answers 403 `WORKFLOW_NOT_AVAILABLE`).
 
 A workflow that cannot deliver fails the task instead of padding it, and the
-minutes are refunded. `supoclip_get_task` then shows `status: "error"` and an
+minutes are refunded. `Clipify_get_task` then shows `status: "error"` and an
 `error_code`: `topic_not_found` (with `workflow_plan.error.details.suggested_topics`
 to try instead), `source_too_short`, `no_story`, `recap_unsupported`,
 `trailer_unbuildable`, `transcript_untimed`, or the retryable
 `analysis_incomplete`, `plan_failed` and `render_incomplete`
-(use `supoclip_resume_task`). Series clips carry `part_number`; every workflow
+(use `Clipify_resume_task`). Series clips carry `part_number`; every workflow
 clip carries `workflow_role` and `workflow_meta`.
 
 ## Example prompts
 
-- "Use supoclip to make clips from https://youtu.be/… with the hormozi caption template, then wait for it and download the top clip."
+- "Use Clipify to make clips from https://youtu.be/… with the hormozi caption template, then wait for it and download the top clip."
 - "Turn https://youtu.be/… into a 5-part series and download the parts in order."
 - "Find every moment about pricing in https://youtu.be/…; if the topic isn't covered, try the first suggested topic."
 - "Make a one-minute recap of https://youtu.be/… focused on the money advice."
-- "List my recent supoclip tasks and show the virality scores of the latest one's clips."
+- "List my recent Clipify tasks and show the virality scores of the latest one's clips."
 - "Export clip <id> from task <id> as a TikTok preset."
 
 ## License
 
-AGPL-3.0-or-later, matching the SupoClip project.
+AGPL-3.0-or-later, matching the Clipify project.
 
 ### Clip length
 
-`supoclip_create_clip_task` accepts `clip_length`: `auto` (default, 15–60s),
+`Clipify_create_clip_task` accepts `clip_length`: `auto` (default, 15–60s),
 `short` (15–30s), `medium` (30–60s), or `long` (1–2 min). This controls the
 selection range and rendering limit. Removing pauses and filler words can
 shorten the finished clips. For a series it sets each part's length (auto

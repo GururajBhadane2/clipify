@@ -67,7 +67,7 @@ export const MIN_SOURCE_SECONDS: Record<Workflow, number> = {
 };
 
 /** localStorage key for the last workflow picked on the create screen. */
-export const WORKFLOW_STORAGE_KEY = "supoclip.workflow";
+export const WORKFLOW_STORAGE_KEY = "Clipify.workflow";
 
 /**
  * `workflow_options` as sent to `POST /tasks/` and stored on the task. Send

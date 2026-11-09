@@ -1,6 +1,6 @@
-# SupoClip Workflows: final implementation spec
+# Clipify Workflows: final implementation spec
 
-Codebase: `/home/loki/Work/supoclip-workflows` at `08ec76db`. Paths below are relative to the repo root unless stated otherwise. Line numbers are from that commit; re-anchor on function names if they drift.
+Codebase: `/home/loki/Work/Clipify-workflows` at `08ec76db`. Paths below are relative to the repo root unless stated otherwise. Line numbers are from that commit; re-anchor on function names if they drift.
 
 Audience: engineers who have **not** read the earlier design docs. Everything you need is here.
 
@@ -1532,7 +1532,7 @@ Resume route unchanged: the worker re-reads `workflow`/`workflow_options` and re
 ### 16.2 `home-app.tsx` behaviour
 
 - **Availability**: fetch `/api/tasks/workflows` once (existing catch-all proxy `app/api/tasks/[...path]`). Hide the picker and the instructions chip when `enabled !== true`.
-- **State**: `workflow` (init from `?workflow=` if `isWorkflow`, else `localStorage["supoclip.workflow"]`, else `"highlights"`; write on change), `topic` (never persisted), `partCount: "auto" | number`, `instructions`, `instructionsOpen`, `workflowLength: ClipLength` (local, default `"auto"`, **not** persisted).
+- **State**: `workflow` (init from `?workflow=` if `isWorkflow`, else `localStorage["Clipify.workflow"]`, else `"highlights"`; write on change), `topic` (never persisted), `partCount: "auto" | number`, `instructions`, `instructionsOpen`, `workflowLength: ClipLength` (local, default `"auto"`, **not** persisted).
 - **Length semantics**: for `highlights` and `topic` the existing persisted `clipLength` + `chooseClipLength` (saves the default) is used. For `series`, `recap`, `trailer` the chip edits `workflowLength` and does **not** call `/api/preferences` (choosing a recap length must not change the user's default clip length). Submit sends `clip_length = (highlights|topic) ? clipLength : workflowLength`.
 - **Layout**: `<WorkflowPicker>` goes between the subtitle (:403–405) and the `<form>` (:411), headed by `t("whatToMake")` as a `text-sm font-medium` label (sentence case, no uppercase eyebrow). Cards: `grid grid-cols-2 gap-2 sm:grid-cols-5`; on mobile the 5th card spans 2 columns. Each card copies the framing recipe (:627–638): `rounded-xl border p-3 text-left hover:bg-accent`, selected `border-foreground ring-1 ring-foreground`, a `h-12 rounded-lg bg-muted` glyph tile, `text-sm font-medium` label, `text-xs text-muted-foreground` hint. `role="radiogroup"` / `role="radio"`, `aria-checked`, roving tabindex, ←/→/↑/↓ move selection. All controls respect `controlsDisabled`. Orange (`bg-brand`) only as at most one dot inside a glyph.
 - **Glyphs** (`WorkflowGlyph`, monochrome bars like `FramingGlyph` :802): highlights = 5 scattered bars, one with a brand dot; series = three joined tiles labelled 1·2·3; topic = bars with only two lit and a small ring; recap = four bars funnelling into one; trailer = a play triangle with three tick marks.
@@ -1733,11 +1733,11 @@ Existing `subtitle` and `generate` keys stay (other code may use them).
 
 ## 18. MCP and docs (WP6)
 
-`mcp/src/supoclip_mcp/server.py::supoclip_create_clip_task` (:343) gains `workflow: str = "highlights", topic: str = "", part_count: int = 0, instructions: str = ""` (0 = auto). Local validation mirrors §4.2 (workflow set, topic required for topic and ≤ 120, part_count 0 or 2–10, instructions ≤ 500). Body includes `workflow` only when not highlights, `workflow_options` only when non-empty, `instructions` only when non-empty. Docstring (the calling LLM reads it):
+`mcp/src/Clipify_mcp/server.py::Clipify_create_clip_task` (:343) gains `workflow: str = "highlights", topic: str = "", part_count: int = 0, instructions: str = ""` (0 = auto). Local validation mirrors §4.2 (workflow set, topic required for topic and ≤ 120, part_count 0 or 2–10, instructions ≤ 500). Body includes `workflow` only when not highlights, `workflow_options` only when non-empty, `instructions` only when non-empty. Docstring (the calling LLM reads it):
 
 > workflow: what to make. "highlights" (default) = the best standalone clips. "series" = one story split into ordered, numbered parts (Part 1..N) cut on clean shared boundaries; clip_length sets part length; part_count 0 = auto or 2-10. "topic" = every strong standalone moment about `topic` (required); fails with code topic_not_found and suggested topics when the video barely covers it. "recap" = ONE short video covering the main points in order; clip_length sets total length. "trailer" = ONE short teaser that never reveals the payoff; clip_length sets total length. Series/recap/trailer need videos of at least 2/3/3 minutes. instructions: optional free-text editorial guidance for any workflow (max 500 characters), e.g. "skip the sponsor read" or "focus on the hiring story".
 
-New tool `supoclip_list_workflows()` → `GET /tasks/workflows`. `supoclip_create_clip` stays highlights. Update `mcp/README.md` (tool table :22, new "Workflows" section), add `mcp/tests/test_workflows.py` (mirrors `test_clip_duration.py`), add an MCP test job to `.github/workflows/tests.yml` (`cd mcp && uv run --with pytest pytest tests -q`).
+New tool `Clipify_list_workflows()` → `GET /tasks/workflows`. `Clipify_create_clip` stays highlights. Update `mcp/README.md` (tool table :22, new "Workflows" section), add `mcp/tests/test_workflows.py` (mirrors `test_clip_duration.py`), add an MCP test job to `.github/workflows/tests.yml` (`cd mcp && uv run --with pytest pytest tests -q`).
 
 Docs: `docs/api-reference.md` (fields, example body per workflow, 422/403 codes, response fields, worker `error_code`s, "omit `workflow` = highlights"); new `docs/workflows.md` (pipeline, units, outline, planners, env vars `WORKFLOWS_ACCESS`, `WORKFLOWS_ALLOWED_EMAILS`, `WORKFLOW_TOPIC_MAX_CLIPS`, `WORKFLOW_PLAN_TIMEOUT_SECONDS`, `WORKFLOW_FULL_CONTEXT_MAX_WORDS`); `CLAUDE.md` (Workflows section; fix `POST /start-with-progress` → `POST /tasks/`; tests exist).
 
@@ -1746,7 +1746,7 @@ Docs: `docs/api-reference.md` (fields, example body per workflow, 422/403 codes,
 ## 19. Tests
 
 Targeted backend runs need `--no-cov` (coverage gate in `addopts`):
-`cd backend && /home/loki/Work/supoclip/backend/.venv/bin/pytest -p no:cacheprovider --no-cov -q tests/unit/<file>`.
+`cd backend && /home/loki/Work/Clipify/backend/.venv/bin/pytest -p no:cacheprovider --no-cov -q tests/unit/<file>`.
 
 LLM agents are mocked as `SimpleNamespace(run=AsyncMock(return_value=SimpleNamespace(output=..., usage=lambda: ...)))` or by patching `workflows.llm.run`.
 
@@ -1804,10 +1804,10 @@ LLM agents are mocked as `SimpleNamespace(run=AsyncMock(return_value=SimpleNames
 `backend/scripts/workflow_eval.py` (not collected by pytest) + `docs/workflows-eval.md`:
 
 1. Fixtures (all on disk; rebuild the analysis transcript from each sidecar with `format_transcript_for_analysis`):
-   - `/home/loki/.cache/supoclip-pr163/uploads/original-upload.transcript_cache.json` (Hindi/mixed, 57 min, has video)
-   - `/home/loki/Work/supoclip/output/clip-quality-20261027/sources/{01..10}` (en; 07 = German Tagesschau; 05 = 1.6 min too-short case)
-   - `/home/loki/Work/supoclip/output/article-clips-20261026/{price,ton}/uploads/*` (Whisper, no speakers, have video)
-   - `/home/loki/Work/supoclip/output/overlap-local-224/generation/uploads/youtube-vLzdmlIqyGg` (Whisper, has video)
+   - `/home/loki/.cache/Clipify-pr163/uploads/original-upload.transcript_cache.json` (Hindi/mixed, 57 min, has video)
+   - `/home/loki/Work/Clipify/output/clip-quality-20261027/sources/{01..10}` (en; 07 = German Tagesschau; 05 = 1.6 min too-short case)
+   - `/home/loki/Work/Clipify/output/article-clips-20261026/{price,ton}/uploads/*` (Whisper, no speakers, have video)
+   - `/home/loki/Work/Clipify/output/overlap-local-224/generation/uploads/youtube-vLzdmlIqyGg` (Whisper, has video)
    - synthetic 3 h: concatenate 02 + 04 + 10 + pr163 with time offsets (scale, long mode, timeouts)
    - a coarse variant of 04 with words removed (coarse fallback)
 2. Run every workflow on every fixture. Default `LLM=ollama:qwen3.8:27b` with `OLLAMA_BASE_URL=http://127.0.0.1:11434/v1` (free iteration); one final pass with `LLM=openrouter:anthropic/claude-sonnet-5.5` (≈ $2.4 credit left: budget one pass on 5 fixtures).
@@ -1893,7 +1893,7 @@ Depends on: WP1 (`lib/workflows.ts`, API shape). Delivers §16.
 Owns:
 - `frontend/src/app/tasks/[id]/page.tsx`, `frontend/src/components/app/clip-wall.tsx`, `frontend/src/components/app/series-view.tsx` (new), `frontend/src/components/app/hero-clip-view.tsx` (new), `frontend/src/components/app/workflow-failure.tsx` (new), `frontend/src/components/app/generation-card.tsx`, `frontend/src/lib/generations.ts`, `frontend/src/app/share/[token]/page.tsx`, `frontend/src/components/clip-publisher.tsx`, `frontend/src/components/editor/editor-workspace.tsx`, `frontend/src/components/editor/export-panel.tsx`
 - `frontend/messages/{en,de,es,id,pt,zh}/{task,library,share,editor}.json`
-- `mcp/src/supoclip_mcp/server.py`, `mcp/README.md`, `mcp/tests/test_workflows.py`, `.github/workflows/tests.yml`
+- `mcp/src/Clipify_mcp/server.py`, `mcp/README.md`, `mcp/tests/test_workflows.py`, `.github/workflows/tests.yml`
 - `docs/api-reference.md`, `docs/workflows.md`, `CLAUDE.md`
 - Tests: `series-view.test.tsx`, `hero-clip-view.test.tsx`, `workflow-failure.test.tsx`, task page test
 

@@ -26,7 +26,7 @@ PLATFORMS: tuple[Platform, ...] = ("web", "ios")
 
 # Sent by the iOS app (and forwarded by the web proxies). Anything else,
 # including API keys and the MCP server, counts as web.
-CLIENT_HEADER = "x-supoclip-client"
+CLIENT_HEADER = "x-Clipify-client"
 
 CACHE_TTL_SECONDS = 15.0
 

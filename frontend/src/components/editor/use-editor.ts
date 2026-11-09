@@ -63,7 +63,7 @@ export function useEditor(endpoint: string) {
     saved = useRef("");
   const inFlight = useRef<Promise<void> | null>(null);
   const mounted = useRef(true);
-  const cacheKey = `supoclip-editor:${endpoint}`;
+  const cacheKey = `Clipify-editor:${endpoint}`;
   const lastEdit = useRef({ group: "", at: 0 });
   const cache = useCallback(
     (value: History) => {

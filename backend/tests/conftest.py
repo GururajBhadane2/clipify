@@ -125,9 +125,9 @@ def auth_headers():
     ).hexdigest()
 
     return {
-        "x-supoclip-user-id": user_id,
-        "x-supoclip-ts": timestamp,
-        "x-supoclip-signature": signature,
+        "x-Clipify-user-id": user_id,
+        "x-Clipify-ts": timestamp,
+        "x-Clipify-signature": signature,
     }
 
 

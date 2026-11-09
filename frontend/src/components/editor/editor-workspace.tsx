@@ -510,7 +510,7 @@ export function EditorWorkspace({
                             new Blob([JSON.stringify(doc, null, 2)], {
                               type: "application/json",
                             }),
-                            `supoclip-draft-${clip.id}.json`,
+                            `Clipify-draft-${clip.id}.json`,
                           )
                         }
                       >

@@ -20,7 +20,7 @@ export async function AcquisitionCta({ slug, locale }: { slug: string; locale: s
         <div className="space-y-3">
           <h3 className="font-semibold">{t("selfHostTitle")}</h3>
           <p className="text-sm leading-7 text-muted-foreground">{t("selfHostBody")}</p>
-          <Link href="/blog/self-host-supoclip-docker" className="inline-flex rounded-lg border px-5 py-3 text-sm font-semibold">{t("selfHostButton")}</Link>
+          <Link href="/blog/self-host-Clipify-docker" className="inline-flex rounded-lg border px-5 py-3 text-sm font-semibold">{t("selfHostButton")}</Link>
         </div>
       </div>
     </section>

@@ -5,10 +5,10 @@ import sys
 from starlette.testclient import TestClient
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from supoclip_mcp import server
+from Clipify_mcp import server
 
 
-def test_http_initialization_requires_a_valid_supoclip_api_key(monkeypatch):
+def test_http_initialization_requires_a_valid_Clipify_api_key(monkeypatch):
     monkeypatch.setattr(server, "SETTINGS", replace(
         server.SETTINGS,
         mcp_host="127.0.0.1",
@@ -20,7 +20,7 @@ def test_http_initialization_requires_a_valid_supoclip_api_key(monkeypatch):
     async def valid_key(self, token):
         return token == "sk_transport_test_key"
 
-    monkeypatch.setattr(server.SupoClipApiKeyVerifier, "_is_valid_key", valid_key)
+    monkeypatch.setattr(server.ClipifyApiKeyVerifier, "_is_valid_key", valid_key)
     mcp = server._build_mcp()
     payload = {
         "jsonrpc": "2.0",

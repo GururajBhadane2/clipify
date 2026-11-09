@@ -15,7 +15,7 @@ from tests.fixtures.factories import create_user
 
 MIGRATION = Path(__file__).parents[2] / "src/migrations/sql/20261105_0004_feature_flags.sql"
 YOUTUBE_URL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-IOS = {"x-supoclip-client": "ios"}
+IOS = {"x-Clipify-client": "ios"}
 
 
 def headers_for(user_id: str, **extra: str) -> dict[str, str]:
@@ -23,7 +23,7 @@ def headers_for(user_id: str, **extra: str) -> dict[str, str]:
     signature = hmac.new(
         b"test-backend-auth-secret", f"{user_id}:{timestamp}".encode(), hashlib.sha256
     ).hexdigest()
-    return {"x-supoclip-user-id": user_id, "x-supoclip-ts": timestamp, "x-supoclip-signature": signature, **extra}
+    return {"x-Clipify-user-id": user_id, "x-Clipify-ts": timestamp, "x-Clipify-signature": signature, **extra}
 
 
 @pytest.fixture

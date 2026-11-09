@@ -173,7 +173,7 @@ test.describe("accounts and settings with real services", () => {
   test("signup, signout, incorrect password and private route protection", async ({ page }) => {
     await page.goto("/sign-up");
     await page.getByPlaceholder("Full Name").fill("Local test account");
-    const email = `local-${Date.now()}@supoclip.test`;
+    const email = `local-${Date.now()}@Clipify.test`;
     await page.getByPlaceholder("Email").fill(email);
     await page.getByPlaceholder("Password").fill("LocalTestPassword123!");
     await page.getByRole("button", { name: "Sign Up", exact: true }).click();

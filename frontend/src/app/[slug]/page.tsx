@@ -42,10 +42,10 @@ export async function generateMetadata({ params }: SeoLandingPageProps): Promise
     keywords: page.keywords,
     alternates: { canonical: url },
     openGraph: {
-      title: `${title} | SupoClip`,
+      title: `${title} | Clipify`,
       description,
       url,
-      siteName: "SupoClip",
+      siteName: "Clipify",
       type: "article",
       publishedTime: page.publishedAt,
       modifiedTime: page.updatedAt,
@@ -88,14 +88,14 @@ export default async function SeoLandingPage({ params }: SeoLandingPageProps) {
       datePublished: page.publishedAt,
       dateModified: page.updatedAt,
       author: { "@type": "Organization", name: t("chrome.team"), url: siteUrl },
-      publisher: { "@type": "Organization", name: "SupoClip", url: siteUrl },
-      about: { "@type": "SoftwareApplication", name: "SupoClip", url: siteUrl },
+      publisher: { "@type": "Organization", name: "Clipify", url: siteUrl },
+      about: { "@type": "SoftwareApplication", name: "Clipify", url: siteUrl },
     },
     {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "SupoClip", item: siteUrl },
+        { "@type": "ListItem", position: 1, name: "Clipify", item: siteUrl },
         { "@type": "ListItem", position: 2, name: heading, item: url },
       ],
     },
@@ -123,12 +123,12 @@ export default async function SeoLandingPage({ params }: SeoLandingPageProps) {
       <header className="border-b bg-background/95">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/logo.png" alt="SupoClip" width={24} height={24} className="rounded-lg dark:invert" />
-            <span className="text-lg font-bold tracking-tight">SupoClip</span>
+            <Image src="/logo.png" alt="Clipify" width={24} height={24} className="rounded-lg dark:invert" />
+            <span className="text-lg font-bold tracking-tight">Clipify</span>
           </Link>
           <nav className="flex items-center gap-2" aria-label={t("chrome.primaryNav")}>
             <Link href="/blog"><Button variant="ghost" size="sm">{t("chrome.blog")}</Button></Link>
-            <Link href="/blog/self-host-supoclip-docker" className="hidden sm:block"><Button variant="ghost" size="sm">{t("chrome.selfHost")}</Button></Link>
+            <Link href="/blog/self-host-clipify-docker" className="hidden sm:block"><Button variant="ghost" size="sm">{t("chrome.selfHost")}</Button></Link>
             <Link href="/sign-up"><Button size="sm">{t("chrome.startClipping")}</Button></Link>
           </nav>
         </div>
@@ -138,7 +138,7 @@ export default async function SeoLandingPage({ params }: SeoLandingPageProps) {
         <section className="border-b bg-muted/35">
           <div className="mx-auto max-w-5xl px-6 py-14 md:py-20">
             <nav aria-label={t("chrome.breadcrumbNav")} className="mb-6 text-sm text-muted-foreground">
-              <Link href="/" className="hover:text-foreground">SupoClip</Link>
+              <Link href="/" className="hover:text-foreground">Clipify</Link>
               <span aria-hidden="true" className="mx-2">/</span>
               <span>{t(`${slug}.eyebrow`)}</span>
             </nav>
@@ -158,7 +158,7 @@ export default async function SeoLandingPage({ params }: SeoLandingPageProps) {
               </span>
             </div>
             <div className="mt-9 flex flex-wrap gap-3">
-              <Link href="/sign-up"><Button size="lg">{t("chrome.trySupoclip")} <ArrowRight className="h-4 w-4" /></Button></Link>
+              <Link href="/sign-up"><Button size="lg">{t("chrome.tryClipify")} <ArrowRight className="h-4 w-4" /></Button></Link>
               <Link href="#real-clips"><Button variant="outline" size="lg">{t("proof.previewButton")}</Button></Link>
             </div>
           </div>

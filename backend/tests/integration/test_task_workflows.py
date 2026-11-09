@@ -27,7 +27,7 @@ def headers_for(user_id: str) -> dict[str, str]:
     signature = hmac.new(
         b"test-backend-auth-secret", f"{user_id}:{timestamp}".encode(), hashlib.sha256
     ).hexdigest()
-    return {"x-supoclip-user-id": user_id, "x-supoclip-ts": timestamp, "x-supoclip-signature": signature}
+    return {"x-Clipify-user-id": user_id, "x-Clipify-ts": timestamp, "x-Clipify-signature": signature}
 
 
 @pytest.fixture
@@ -528,7 +528,7 @@ async def test_clip_reads_and_writes_fall_back_before_the_migration(db_session, 
         assert (one["hook_title"], one["workflow_role"], one["part_number"]) == ("Still stored", None, None)
         # A split before the migration still updates the clip, without metadata.
         # The edit flag keeps the repository's commit from persisting the DDL.
-        db_session.info["supoclip_edit_task"] = task_id
+        db_session.info["Clipify_edit_task"] = task_id
         half = tmp_path / "half.mp4"
         half.write_bytes(b"half")
         await ClipRepository.update_clip(
@@ -537,7 +537,7 @@ async def test_clip_reads_and_writes_fall_back_before_the_migration(db_session, 
         )
         assert (await ClipRepository.get_clip_by_id(db_session, clip_id))["duration"] == 10.0
     finally:
-        db_session.info.pop("supoclip_edit_task", None)
+        db_session.info.pop("Clipify_edit_task", None)
         await db_session.rollback()
 
 
@@ -547,7 +547,7 @@ async def test_task_reads_tolerate_and_inserts_refuse_a_missing_workflow_column(
     source = await create_source(db_session)
     # DDL is rolled back at the end, restoring the current schema. The edit
     # flag keeps repository commits from persisting the dropped column.
-    db_session.info["supoclip_edit_task"] = task_id
+    db_session.info["Clipify_edit_task"] = task_id
     await db_session.execute(text("ALTER TABLE tasks DROP COLUMN workflow CASCADE"))
     try:
         task = await TaskRepository.get_task_by_id(db_session, task_id)
@@ -563,7 +563,7 @@ async def test_task_reads_tolerate_and_inserts_refuse_a_missing_workflow_column(
                 db_session, owner["id"], source["id"], source_duration_seconds=60, workflow="recap",
             )
     finally:
-        db_session.info.pop("supoclip_edit_task", None)
+        db_session.info.pop("Clipify_edit_task", None)
         await db_session.rollback()
     assert (await task_row(db_session, task_id)).workflow == "series"
 

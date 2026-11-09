@@ -227,7 +227,7 @@ describe("when the server does not offer workflows", () => {
   ] as const) {
     it(`hides every workflow control and sends today's request (${label})`, async () => {
       workflowsResponse = response;
-      storage.set("supoclip.workflow", "series");
+      storage.set("Clipify.workflow", "series");
       await renderHome({ workflows: false });
 
       expect(screen.queryByText("What do you want to make?")).not.toBeInTheDocument();
@@ -255,7 +255,7 @@ describe("when the server does not offer workflows", () => {
 
 describe("before the server says what's offered", () => {
   it("won't send a saved series as plain highlights", async () => {
-    storage.set("supoclip.workflow", "series");
+    storage.set("Clipify.workflow", "series");
     let settle: (response: Response) => void = () => {};
     workflowsResponse = () => new Promise<Response>((resolve) => { settle = resolve; });
     render(<HomeApp />, { wrapper: TooltipProvider });
@@ -270,7 +270,7 @@ describe("before the server says what's offered", () => {
   });
 
   it("doesn't hold back someone making plain highlights", async () => {
-    storage.set("supoclip.workflow", "highlights");
+    storage.set("Clipify.workflow", "highlights");
     workflowsResponse = () => new Promise<Response>(() => {});
     render(<HomeApp />, { wrapper: TooltipProvider });
     await waitFor(() => expect(vi.mocked(fetch).mock.calls.some(([input]) => String(input).includes("/api/tasks/workflows"))).toBe(true));
@@ -358,7 +358,7 @@ describe("when workflows are enabled", () => {
     await renderHome();
     pick(/Series/);
     expect(screen.getByText("Drop in a long video. Get back a numbered series that keeps people watching.")).toBeInTheDocument();
-    expect(storage.get("supoclip.workflow")).toBe("series");
+    expect(storage.get("Clipify.workflow")).toBe("series");
 
     openSection(/Part length/);
     fireEvent.click(await screen.findByRole("radio", { name: "Long (1.5–3 min)" }));
@@ -472,7 +472,7 @@ describe("when workflows are enabled", () => {
 
     const body = await submit("Find moments");
     expect(body).toMatchObject({ workflow: "topic", workflow_options: { topic: "building a business" }, clip_length: "medium" });
-    expect(storage.get("supoclip.workflow")).toBe("topic");
+    expect(storage.get("Clipify.workflow")).toBe("topic");
     expect([...storage.values()].join()).not.toContain("building");
   });
 
@@ -649,7 +649,7 @@ describe("when workflows are enabled", () => {
   });
 
   it("remembers the last workflow", async () => {
-    storage.set("supoclip.workflow", "recap");
+    storage.set("Clipify.workflow", "recap");
     await renderHome();
     expect(screen.getByRole("radio", { name: /Recap/ })).toHaveAttribute("aria-checked", "true");
     expect(screen.getByRole("button", { name: "Make recap" })).toBeInTheDocument();

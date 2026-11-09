@@ -308,7 +308,7 @@ async def export_file(
     reference = storage.editor_reference(directory, output.name)
     try:
         if (storage.enabled or (directory / ".s3-manifest").exists()) and await run_in_thread(storage.exists, reference):
-            url = await run_in_thread(storage.signed_url, reference, f"supoclip-{clip_id[:8]}-{job_id[:6]}.mp4", attachment=True)
+            url = await run_in_thread(storage.signed_url, reference, f"Clipify-{clip_id[:8]}-{job_id[:6]}.mp4", attachment=True)
             return RedirectResponse(url, status_code=307, headers={"Cache-Control": "private, no-store"})
     except STORAGE_ERRORS:
         if not output.exists():
@@ -318,7 +318,7 @@ async def export_file(
     return FileResponse(
         output,
         media_type="video/mp4",
-        filename=f"supoclip-{clip_id[:8]}-{job_id[:6]}.mp4",
+        filename=f"Clipify-{clip_id[:8]}-{job_id[:6]}.mp4",
         headers={"Cache-Control": "private, no-store"},
     )
 

@@ -321,7 +321,7 @@ export function UpgradeDialog({ open, onOpenChange, reason, billing, source }: U
               </div>
               <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{text.t("selfHosted.body")}</p>
               <Link
-                href="/blog/self-host-supoclip-docker"
+                href="/blog/self-host-Clipify-docker"
                 className="mt-3 inline-flex items-center gap-1 text-sm font-medium underline underline-offset-4 hover:text-muted-foreground"
               >
                 {text.t("selfHosted.guide")} <ArrowRight className="size-3.5" />

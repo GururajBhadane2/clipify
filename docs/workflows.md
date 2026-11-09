@@ -51,7 +51,7 @@ allowed = flag on for this platform (or caller is an admin and admins_bypass)
           AND WORKFLOWS_ACCESS admits the user (admins/allowlist/all, or WORKFLOWS_PUBLIC)
 ```
 
-- **Platform** comes from the `x-supoclip-client` header: `ios` from the iOS
+- **Platform** comes from the `x-Clipify-client` header: `ios` from the iOS
   app (the web proxies forward it), anything else, including API keys and the
   MCP server, is `web`.
 - **Off** means `GET /tasks/workflows` reports `enabled: false` for that
@@ -176,7 +176,7 @@ the others and asks for a retry, like highlights.
   chip relabelled per workflow, and **Advanced** (`workflow-advanced.tsx`), a closed
   popover rendered from the settings schema.
   - `/?workflow=<id>` (used by the ⌘K palette) selects that workflow, then
-    replaces the address with `/`. `localStorage["supoclip.workflow"]` keeps
+    replaces the address with `/`. `localStorage["Clipify.workflow"]` keeps
     the last workflow picked (the id only; topic, part count and lengths are
     never stored).
   - Link-box rescue: a request typed into the link box ("make a 3-part
@@ -282,9 +282,9 @@ line plays again later on purpose, so the I2 audit reads each part without its
 
 ## MCP
 
-`supoclip_create_clip_task` takes `workflow`, `topic`, `part_count` (0 = auto)
+`Clipify_create_clip_task` takes `workflow`, `topic`, `part_count` (0 = auto)
 and `instructions`, validated locally with the API's rules, and
-`supoclip_list_workflows` reads `GET /tasks/workflows`. See `mcp/README.md`.
+`Clipify_list_workflows` reads `GET /tasks/workflows`. See `mcp/README.md`.
 
 ## Interfaces (frozen)
 
@@ -657,7 +657,7 @@ Rejections happen before anything is charged (`detail = {"code", "message", ...}
 ```
 
 `enabled` false means only highlights without instructions. It is evaluated for the
-caller's platform (`x-supoclip-client`), so the `workflows` feature flag can hide
+caller's platform (`x-Clipify-client`), so the `workflows` feature flag can hide
 workflows on web while iOS has them, or the reverse.
 
 ### Read paths

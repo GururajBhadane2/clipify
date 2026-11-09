@@ -44,8 +44,8 @@ sys.path.insert(0, str(BACKEND))
 
 os.environ.setdefault("LLM", "anthropic:claude-sonnet-5-5")
 
-SOURCES = Path("/home/loki/Work/supoclip/output/clip-quality-20261027/sources")
-ARTICLES = Path("/home/loki/Work/supoclip/output/article-clips-20261026")
+SOURCES = Path("/home/loki/Work/Clipify/output/clip-quality-20261027/sources")
+ARTICLES = Path("/home/loki/Work/Clipify/output/article-clips-20261026")
 
 
 @dataclass
@@ -74,8 +74,8 @@ FIXTURES: dict[str, Fixture] = {
     "09": Fixture("09", SOURCES / "09.transcript_cache.json", "sound", note="en, 1.5 min"),
     "10": Fixture("10", SOURCES / "10.transcript_cache.json", "dopamine", note="en podcast, 34 min"),
     "pr163": Fixture(
-        "pr163", Path("/home/loki/.cache/supoclip-pr163/uploads/original-upload.transcript_cache.json"),
-        "डॉक्टर", video=Path("/home/loki/.cache/supoclip-pr163/uploads/original-upload.mkv"),
+        "pr163", Path("/home/loki/.cache/Clipify-pr163/uploads/original-upload.transcript_cache.json"),
+        "डॉक्टर", video=Path("/home/loki/.cache/Clipify-pr163/uploads/original-upload.mkv"),
         note="hi/mixed, 57 min, no language code",
     ),
     "price": Fixture(
@@ -88,9 +88,9 @@ FIXTURES: dict[str, Fixture] = {
     ),
     "vlz": Fixture(
         "vlz",
-        Path("/home/loki/Work/supoclip/output/overlap-local-224/generation/uploads/youtube-vLzdmlIqyGg.transcript_cache.json"),
+        Path("/home/loki/Work/Clipify/output/overlap-local-224/generation/uploads/youtube-vLzdmlIqyGg.transcript_cache.json"),
         "crime",
-        video=Path("/home/loki/Work/supoclip/output/overlap-local-224/generation/uploads/youtube-vLzdmlIqyGg.mp4"),
+        video=Path("/home/loki/Work/Clipify/output/overlap-local-224/generation/uploads/youtube-vLzdmlIqyGg.mp4"),
         note="Whisper, 9 min",
     ),
     "synthetic3h": Fixture("synthetic3h", None, "sleep", build="synthetic", note="02+04+10+pr163 stitched, ~2.5 h"),

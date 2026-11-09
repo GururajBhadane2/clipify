@@ -72,8 +72,8 @@ export default async function FaqPage() {
       <header className="border-b">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/logo.png" alt="SupoClip" width={24} height={24} className="rounded-lg" />
-            <span className="font-display text-lg font-bold tracking-tight">SupoClip</span>
+            <Image src="/logo.png" alt="Clipify" width={24} height={24} className="rounded-lg" />
+            <span className="font-display text-lg font-bold tracking-tight">Clipify</span>
           </Link>
           <Link href="/sign-up" className={buttonVariants({ size: "sm" })}>{t("creator.start")}</Link>
         </div>
@@ -102,7 +102,7 @@ export default async function FaqPage() {
         <section id="processing" aria-labelledby="processing-title" className="scroll-mt-8">
           <h2 id="processing-title" className="font-display text-3xl font-bold tracking-tight">{t("faqPage.sections.processing")}</h2>
           <Questions items={processingQuestions} />
-          <Link href="/blog/self-host-supoclip-docker" className="mt-5 inline-block text-sm font-medium underline underline-offset-4">{t("pricing.selfHostGuide")}</Link>
+          <Link href="/blog/self-host-Clipify-docker" className="mt-5 inline-block text-sm font-medium underline underline-offset-4">{t("pricing.selfHostGuide")}</Link>
         </section>
         <section id="general" aria-labelledby="general-title" className="scroll-mt-8">
           <h2 id="general-title" className="font-display text-3xl font-bold tracking-tight">{t("faqPage.sections.general")}</h2>

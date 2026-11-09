@@ -28,8 +28,8 @@ type RevenueCatEvent = {
 };
 
 const DEFAULT_PRODUCT_IDS: Record<BillingPlan, string[]> = {
-  pro: ["com.samihindi.supoclip.pro.monthly", "com.samihindi.supoclip.pro.annual"],
-  scale: ["com.samihindi.supoclip.scale.monthly", "com.samihindi.supoclip.scale.annual"],
+  pro: ["com.samihindi.Clipify.pro.monthly", "com.samihindi.Clipify.pro.annual"],
+  scale: ["com.samihindi.Clipify.scale.monthly", "com.samihindi.Clipify.scale.annual"],
 };
 // PRODUCT_CHANGE is intentionally excluded: it announces a pending plan switch
 // (App Store downgrades apply at the next renewal), and the effective change

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-SupoClip is an open-source alternative to OpusClip — an AI-powered video clipping tool that transforms long-form content into viral short clips. AGPL-3.0 licensed.
+Clipify is an open-source alternative to OpusClip — an AI-powered video clipping tool that transforms long-form content into viral short clips. AGPL-3.0 licensed.
 
 ## Development Commands
 
@@ -19,7 +19,7 @@ docker-compose logs -f ai-worker  # Debug AI editing in the clip studio
 docker-compose down               # Stop all services
 ```
 
-Services: Frontend (:3107), Backend API (:8000, docs at /docs), Worker (ARQ), AI worker (ARQ, `supoclip_ai` queue), PostgreSQL (:5432), Redis (:6379)
+Services: Frontend (:3107), Backend API (:8000, docs at /docs), Worker (ARQ), AI worker (ARQ, `Clipify_ai` queue), PostgreSQL (:5432), Redis (:6379)
 
 ### Backend (local)
 
@@ -139,7 +139,7 @@ PostgreSQL 15. Schema in `init.sql`. Mixed naming conventions:
 | `src/editor_document.py` | Clip studio draft model (segments, words, captions, framing, B-roll) and server render |
 | `src/workflows/` | Workflows (series, topic, recap, trailer): contracts, options/gate, units, outline, planners, solvers |
 | `src/services/ai_edit_service.py` | Studio AI editing: Sonnet 5.5 plans typed operations, applied and validated here |
-| `src/workers/ai_worker.py` | Light ARQ worker for AI edits (`supoclip_ai` queue, own container) |
+| `src/workers/ai_worker.py` | Light ARQ worker for AI edits (`Clipify_ai` queue, own container) |
 | `src/broll.py` | Pexels API B-roll integration |
 | `src/caption_templates.py` | Caption template system |
 | `src/config.py` | Environment variable configuration |
@@ -304,7 +304,7 @@ switch a feature per platform without a deploy, in the `/admin` "Feature Flags" 
 (`/api/admin/feature-flags/[key]`, written with Prisma). `backend/src/feature_flags.py` reads them with a
 15-second in-process cache; a missing row or unreadable table falls back to `DEFAULT_FLAGS` (off, admins bypass).
 
-- **Platform:** `x-supoclip-client: ios` from the iOS app (`AuthInterceptor`), forwarded by the web proxies
+- **Platform:** `x-Clipify-client: ios` from the iOS app (`AuthInterceptor`), forwarded by the web proxies
   (`backendTraceHeaders` in `server/backend-api.ts`); anything else, API keys and MCP included, is web.
 - **On** = the platform column, or the caller is an admin and `admins_bypass` is set.
 - `GET /feature-flags` (proxied at `/api/feature-flags`) returns the evaluated booleans for the caller.
@@ -341,7 +341,7 @@ Personalized analyses skip the shared `processing_cache` analysis entry.
   all platforms unconfigured (clients hide publishing unless `enabled` is exactly true) and the
   disconnect routes (account deletion revokes tokens).
 - **iOS app:** `POST .../authorize` with `{"client": "ios"}` prefixes the OAuth state with `m.`; the
-  web callback then redirects to `supoclip://social-callback?provider&code&state` and the app
+  web callback then redirects to `Clipify://social-callback?provider&code&state` and the app
   completes `/callback` with its own session (the state stays bound to the starting user).
 - **Platform approvals gate real users:** TikTok only allows sandbox target users until its audit,
   Instagram only app testers until Meta review, and YouTube uploads from an unaudited project stay
@@ -382,7 +382,7 @@ story, adjacent parts share one exact cut), `topic` (every strong moment about `
   create and resume; self-hosters set `all`. The `workflows` feature flag (below) must also be on for the platform. Also `WORKFLOW_TOPIC_MAX_CLIPS`, `WORKFLOW_PLAN_TIMEOUT_SECONDS`, `WORKFLOW_FULL_CONTEXT_MAX_WORDS`.
 - **Frontend:** contract in `lib/workflows.ts`; results in `components/app/series-view.tsx`,
   `hero-clip-view.tsx` and `workflow-failure.tsx`. MCP: `workflow`/`topic`/`part_count`/`instructions` on
-  `supoclip_create_clip_task`, plus `supoclip_list_workflows`.
+  `Clipify_create_clip_task`, plus `Clipify_list_workflows`.
 
 ### Modifying AI clip selection
 
@@ -398,8 +398,8 @@ Edit `backend/src/ai.py`: `simplified_system_prompt` controls selection criteria
 
 ## Observability
 
-Errors and analytics go to PostHog (project "SupoClip", EU, id `314504`); logs go to
-Axiom (dataset `supoclip-prod`). Everything is off unless tokens are set. Details in
+Errors and analytics go to PostHog (project "Clipify", EU, id `314504`); logs go to
+Axiom (dataset `Clipify-prod`). Everything is off unless tokens are set. Details in
 `docs/observability.md`.
 
 - **Backend/worker:** `src/observability.py` sends every log record with a traceback to
@@ -411,12 +411,12 @@ Axiom (dataset `supoclip-prod`). Everything is off unless tokens are set. Detail
 - **Correlation:** an exception's `trace_id` property matches `trace_id` in Axiom logs
   (worker jobs: `task-<id>`); the PostHog distinct id is the Better Auth user id everywhere.
 - **Logs:** the `vector` service (`observability/vector.yaml`, compose profile `axiom`)
-  ships `supoclip-*` container logs and the host nginx's SupoClip logs.
+  ships `Clipify-*` container logs and the host nginx's Clipify logs.
 
 ## iOS App
 
 A native iOS app ships on the App Store
-(https://apps.apple.com/us/app/supoclip/id6784760040, app id `6784760040`). Its
+(https://apps.apple.com/us/app/Clipify/id6784760040, app id `6784760040`). Its
 source lives outside this repo. It talks to the hosted API and bills through
 RevenueCat, which is what `frontend/src/app/api/billing/revenuecat-webhook/`
 serves; App Store subscribers are blocked from Stripe checkout/portal by the
@@ -440,15 +440,15 @@ high-cap fallback actors are not called. Runbook: `docs/youtube-download.md`.
 ## MCP Server
 
 `mcp/` is a standalone [MCP](https://modelcontextprotocol.io) server
-(`supoclip-mcp`, Python/FastMCP, stdio) that exposes SupoClip to MCP clients
+(`Clipify-mcp`, Python/FastMCP, stdio) that exposes Clipify to MCP clients
 (Claude Desktop/Code, Cursor, …). It is a thin client over the REST API.
 
-- **Default target:** the hosted API `https://api.supoclip.com`. Override with
-  `SUPOCLIP_API_URL` for self-hosting (e.g. `http://localhost:8000`).
-- **Auth:** a per-user API key in `SUPOCLIP_API_KEY` (see API keys above).
-  Self-hosters may instead use `SUPOCLIP_USER_ID` (+ `SUPOCLIP_AUTH_SECRET` when
+- **Default target:** the hosted API `https://api.Clipify.com`. Override with
+  `Clipify_API_URL` for self-hosting (e.g. `http://localhost:8000`).
+- **Auth:** a per-user API key in `Clipify_API_KEY` (see API keys above).
+  Self-hosters may instead use `Clipify_USER_ID` (+ `Clipify_AUTH_SECRET` when
   signing is enforced).
 - **Tools:** create/list/get/wait/cancel/resume/delete tasks (any workflow),
   list workflows, list/download/export clips, and public discovery
   (templates, transitions, fonts, B-roll).
-- Run with `cd mcp && uv run supoclip-mcp`. Details in `mcp/README.md`.
+- Run with `cd mcp && uv run Clipify-mcp`. Details in `mcp/README.md`.

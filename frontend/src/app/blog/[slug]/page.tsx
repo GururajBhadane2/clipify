@@ -81,13 +81,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const locale = await getLocale();
   const post = applyBlogCopy(basePost, (key) => t(key));
 
-  if (slug === "supoclip-vs-supo-live") {
+  if (slug === "clipify-vs-supo-live") {
     return <SupoLiveArticle post={post} />;
   }
-  if (slug === "supoclip-vs-opusclip") {
+  if (slug === "clipify-vs-opusclip") {
     return <OpusClipComparisonArticle post={post} />;
   }
-  if (slug === "self-host-supoclip-docker") {
+  if (slug === "self-host-clipify-docker") {
     return <SelfHostingGuideArticle post={post} />;
   }
 
@@ -111,7 +111,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     },
     publisher: {
       "@type": "Organization",
-      name: "SupoClip",
+      name: "Clipify",
       logo: {
         "@type": "ImageObject",
         url: `${siteUrl}/logo.png`,
@@ -147,12 +147,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <header className="border-b bg-background/95">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/logo.png" alt="SupoClip" width={24} height={24} className="rounded-lg dark:invert" />
+            <Image src="/logo.png" alt="Clipify" width={24} height={24} className="rounded-lg dark:invert" />
             <span
               className="text-lg font-bold tracking-tight"
               style={{ fontFamily: "var(--font-syne), var(--font-geist-sans), system-ui" }}
             >
-              SupoClip
+              Clipify
             </span>
           </Link>
           <div className="flex items-center gap-2">
@@ -273,7 +273,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 })}
               </p>
 
-              <h2 id="supoclip-vs-opusclip">{t(`${key}.compare.heading`)}</h2>
+              <h2 id="clipify-vs-opusclip">{t(`${key}.compare.heading`)}</h2>
               <p>
                 {t.rich(`${key}.compare.body`, {
                   comparison: (chunks) => <Link href={OPUSCLIP_COMPARISON_HREF}>{chunks}</Link>,
@@ -284,7 +284,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <div className="my-8 overflow-hidden rounded-lg border">
               <div className="grid grid-cols-[0.85fr_1fr_1fr] bg-muted/50 text-sm font-semibold">
                 <div className="p-4">{t(`${key}.table.feature`)}</div>
-                <div className="border-l p-4">SupoClip</div>
+                <div className="border-l p-4">Clipify</div>
                 <div className="border-l p-4">OpusClip</div>
               </div>
               {comparisonIcons.map((Icon, index) => (
@@ -293,7 +293,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                     {t(`${key}.table.rows.${index}.feature`)}
                   </div>
-                  <div className="border-l p-4 leading-6 text-muted-foreground">{t(`${key}.table.rows.${index}.supoclip`)}</div>
+                  <div className="border-l p-4 leading-6 text-muted-foreground">{t(`${key}.table.rows.${index}.clipify`)}</div>
                   <div className="border-l p-4 leading-6 text-muted-foreground">{t(`${key}.table.rows.${index}.opusclip`)}</div>
                 </div>
               ))}
@@ -338,7 +338,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                       <ArrowRight className="h-4 w-4" />
                     </Button>
                   </Link>
-                  <a href="https://github.com/FujiwaraChoki/supoclip" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/FujiwaraChoki/clipify" target="_blank" rel="noopener noreferrer">
                     <Button variant="outline" className="border-background/30 bg-transparent text-background hover:bg-background hover:text-foreground">
                       <Github className="h-4 w-4" />
                       GitHub
@@ -402,7 +402,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   <a href="#quick-verdict" className="block text-muted-foreground hover:text-foreground">
                     {t(`${key}.toc.verdict`)}
                   </a>
-                  <a href="#supoclip-vs-opusclip" className="block text-muted-foreground hover:text-foreground">
+                  <a href="#clipify-vs-opusclip" className="block text-muted-foreground hover:text-foreground">
                     {t(`${key}.toc.comparison`)}
                   </a>
                   <a href="#faq" className="block text-muted-foreground hover:text-foreground">

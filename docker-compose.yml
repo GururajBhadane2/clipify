@@ -27,7 +27,7 @@ services:
         - POSTHOG_PERSONAL_API_KEY=${POSTHOG_PERSONAL_API_KEY:-}
         - POSTHOG_PROJECT_ID=${POSTHOG_PROJECT_ID:-}
         - POSTHOG_RELEASE_VERSION=${POSTHOG_RELEASE_VERSION:-}
-    container_name: supoclip-frontend
+    container_name: Clipify-frontend
     ports:
       # Keep the legacy port for deployments whose proxy already uses 3001.
       # .env.example selects 3107 for new self-hosted installations.
@@ -48,8 +48,8 @@ services:
       - DISABLE_SIGN_UP=${DISABLE_SIGN_UP:-false}
       - BACKEND_AUTH_SECRET=${BACKEND_AUTH_SECRET}
       - APP_SETTINGS_ENCRYPTION_KEY=${APP_SETTINGS_ENCRYPTION_KEY}
-      - DATABASE_URL=postgresql://supoclip:supoclip_password@postgres:5432/supoclip
-      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-supoclip_dev_secret_change_in_production}
+      - DATABASE_URL=postgresql://Clipify:Clipify_password@postgres:5432/Clipify
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-Clipify_dev_secret_change_in_production}
       - BETTER_AUTH_URL=${BETTER_AUTH_URL:-http://localhost:3107}
       - BETTER_AUTH_TRUSTED_ORIGINS=${BETTER_AUTH_TRUSTED_ORIGINS:-}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
@@ -83,7 +83,7 @@ services:
       - AWS_REGION=${AWS_REGION}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - "SES_FROM_EMAIL=${SES_FROM_EMAIL:-SupoClip <onboarding@example.com>}"
+      - "SES_FROM_EMAIL=${SES_FROM_EMAIL:-Clipify <onboarding@example.com>}"
     depends_on:
       postgres:
         condition: service_healthy
@@ -104,7 +104,7 @@ services:
       dockerfile: Dockerfile
       args:
         BACKEND_CPU_ONLY: ${BACKEND_CPU_ONLY:-false}
-    container_name: supoclip-backend
+    container_name: Clipify-backend
     # linux/amd64 by default, including on Apple Silicon (emulated). Set
     # BACKEND_PLATFORM=linux/arm64 with BACKEND_CPU_ONLY=true for a native
     # arm64 image. CUDA wheels are amd64-only.
@@ -121,10 +121,10 @@ services:
     environment:
       - PYTHONPATH=/app
       - PYTHONUNBUFFERED=1
-      - SUPOCLIP_SERVICE=backend
+      - Clipify_SERVICE=backend
       - POSTHOG_PROJECT_TOKEN=${POSTHOG_PROJECT_TOKEN:-}
       - POSTHOG_HOST=${POSTHOG_HOST:-https://eu.i.posthog.com}
-      - DATABASE_URL=postgresql+asyncpg://supoclip:supoclip_password@postgres:5432/supoclip
+      - DATABASE_URL=postgresql+asyncpg://Clipify:Clipify_password@postgres:5432/Clipify
       - TEMP_DIR=/app/uploads
       - MEDIA_STORAGE=${MEDIA_STORAGE:-local}
       - MEDIA_S3_BUCKET=${MEDIA_S3_BUCKET:-}
@@ -217,13 +217,13 @@ services:
       - BACKEND_AUTH_SECRET=${BACKEND_AUTH_SECRET}
       - APP_SETTINGS_ENCRYPTION_KEY=${APP_SETTINGS_ENCRYPTION_KEY}
       - AUTH_SIGNATURE_TTL_SECONDS=${AUTH_SIGNATURE_TTL_SECONDS:-300}
-      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3107,http://sp.localhost:3107,http://supoclip.localhost:3107}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3107,http://sp.localhost:3107,http://Clipify.localhost:3107}
       - PRO_PLAN_MINUTE_LIMIT=${PRO_PLAN_MINUTE_LIMIT:-600}
       - SCALE_PLAN_MINUTE_LIMIT=${SCALE_PLAN_MINUTE_LIMIT:-1500}
       - AWS_REGION=${AWS_REGION}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - "SES_FROM_EMAIL=${SES_FROM_EMAIL:-SupoClip <onboarding@example.com>}"
+      - "SES_FROM_EMAIL=${SES_FROM_EMAIL:-Clipify <onboarding@example.com>}"
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3107}
       - DISCORD_FEEDBACK_WEBHOOK_URL=${DISCORD_FEEDBACK_WEBHOOK_URL}
       # Social publishing (OAuth apps; users connect their own accounts)
@@ -268,20 +268,20 @@ services:
     build:
       context: ./mcp
       dockerfile: Dockerfile
-    container_name: supoclip-mcp
+    container_name: Clipify-mcp
     ports:
-      - "127.0.0.1:${SUPOCLIP_MCP_PORT:-9100}:9100"
+      - "127.0.0.1:${Clipify_MCP_PORT:-9100}:9100"
     volumes:
-      - mcp_downloads:/app/supoclip-downloads
+      - mcp_downloads:/app/Clipify-downloads
     environment:
-      - SUPOCLIP_API_URL=${SUPOCLIP_API_URL:-http://backend:8000}
-      - SUPOCLIP_DOWNLOAD_DIR=/app/supoclip-downloads
-      - SUPOCLIP_TIMEOUT=${SUPOCLIP_TIMEOUT:-60}
-      - SUPOCLIP_MCP_TRANSPORT=${SUPOCLIP_MCP_TRANSPORT:-sse}
-      - SUPOCLIP_MCP_HOST=0.0.0.0
-      - SUPOCLIP_MCP_PORT=9100
-      - SUPOCLIP_MCP_PUBLIC_URL=${SUPOCLIP_MCP_PUBLIC_URL:-https://mcp.supoclip.com}
-      - SUPOCLIP_MCP_REQUIRE_BEARER_AUTH=${SUPOCLIP_MCP_REQUIRE_BEARER_AUTH:-true}
+      - Clipify_API_URL=${Clipify_API_URL:-http://backend:8000}
+      - Clipify_DOWNLOAD_DIR=/app/Clipify-downloads
+      - Clipify_TIMEOUT=${Clipify_TIMEOUT:-60}
+      - Clipify_MCP_TRANSPORT=${Clipify_MCP_TRANSPORT:-sse}
+      - Clipify_MCP_HOST=0.0.0.0
+      - Clipify_MCP_PORT=9100
+      - Clipify_MCP_PUBLIC_URL=${Clipify_MCP_PUBLIC_URL:-https://mcp.Clipify.com}
+      - Clipify_MCP_REQUIRE_BEARER_AUTH=${Clipify_MCP_REQUIRE_BEARER_AUTH:-true}
     restart: unless-stopped
     depends_on:
       backend:
@@ -300,7 +300,7 @@ services:
       dockerfile: Dockerfile
       args:
         BACKEND_CPU_ONLY: ${BACKEND_CPU_ONLY:-false}
-    container_name: supoclip-worker
+    container_name: Clipify-worker
     # Same platform override as the backend service.
     platform: "${BACKEND_PLATFORM:-linux/amd64}"
     command: [".venv/bin/arq", "src.workers.tasks.WorkerSettings"]
@@ -313,10 +313,10 @@ services:
     environment: &worker-environment
       - PYTHONPATH=/app
       - PYTHONUNBUFFERED=1
-      - SUPOCLIP_SERVICE=worker
+      - Clipify_SERVICE=worker
       - POSTHOG_PROJECT_TOKEN=${POSTHOG_PROJECT_TOKEN:-}
       - POSTHOG_HOST=${POSTHOG_HOST:-https://eu.i.posthog.com}
-      - DATABASE_URL=postgresql+asyncpg://supoclip:supoclip_password@postgres:5432/supoclip
+      - DATABASE_URL=postgresql+asyncpg://Clipify:Clipify_password@postgres:5432/Clipify
       - TEMP_DIR=/app/uploads
       - MEDIA_STORAGE=${MEDIA_STORAGE:-local}
       - MEDIA_S3_BUCKET=${MEDIA_S3_BUCKET:-}
@@ -409,13 +409,13 @@ services:
       - BACKEND_AUTH_SECRET=${BACKEND_AUTH_SECRET}
       - APP_SETTINGS_ENCRYPTION_KEY=${APP_SETTINGS_ENCRYPTION_KEY}
       - AUTH_SIGNATURE_TTL_SECONDS=${AUTH_SIGNATURE_TTL_SECONDS:-300}
-      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3107,http://sp.localhost:3107,http://supoclip.localhost:3107}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3107,http://sp.localhost:3107,http://Clipify.localhost:3107}
       - PRO_PLAN_MINUTE_LIMIT=${PRO_PLAN_MINUTE_LIMIT:-600}
       - SCALE_PLAN_MINUTE_LIMIT=${SCALE_PLAN_MINUTE_LIMIT:-1500}
       - AWS_REGION=${AWS_REGION}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - "SES_FROM_EMAIL=${SES_FROM_EMAIL:-SupoClip <onboarding@example.com>}"
+      - "SES_FROM_EMAIL=${SES_FROM_EMAIL:-Clipify <onboarding@example.com>}"
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3107}
       # Social publishing (OAuth apps; users connect their own accounts)
       - YOUTUBE_OAUTH_CLIENT_ID=${YOUTUBE_OAUTH_CLIENT_ID}
@@ -466,7 +466,7 @@ services:
       dockerfile: Dockerfile
       args:
         BACKEND_CPU_ONLY: ${BACKEND_CPU_ONLY:-false}
-    container_name: supoclip-ai-worker
+    container_name: Clipify-ai-worker
     platform: "${BACKEND_PLATFORM:-linux/amd64}"
     command: [".venv/bin/arq", "src.workers.ai_worker.AIWorkerSettings"]
     volumes:
@@ -491,7 +491,7 @@ services:
   # compose network; the provider has no authentication of its own.
   bgutil:
     image: brainicism/bgutil-ytdlp-pot-provider:2.0.2
-    container_name: supoclip-bgutil
+    container_name: Clipify-bgutil
     profiles: ["youtube-proxy"]
     init: true
     expose:
@@ -501,7 +501,7 @@ services:
   # Ships container logs to Axiom. Opt-in: COMPOSE_PROFILES=axiom + AXIOM_TOKEN.
   vector:
     image: timberio/vector:0.60.0-alpine
-    container_name: supoclip-vector
+    container_name: Clipify-vector
     profiles: ["axiom"]
     volumes:
       - ./observability/vector.yaml:/etc/vector/vector.yaml:ro
@@ -513,13 +513,13 @@ services:
       # it the literal "${AXIOM_TOKEN}" is sent and Axiom answers Unauthorized.
       - VECTOR_DANGEROUSLY_ALLOW_ENV_VAR_INTERPOLATION=true
       - AXIOM_TOKEN=${AXIOM_TOKEN:-}
-      - AXIOM_DATASET=${AXIOM_DATASET:-supoclip-prod}
+      - AXIOM_DATASET=${AXIOM_DATASET:-Clipify-prod}
     restart: unless-stopped
 
   # Redis for caching and job queues (useful for video processing)
   redis:
     image: redis:7-alpine
-    container_name: supoclip-redis
+    container_name: Clipify-redis
     ports:
       - "127.0.0.1:6379:6379"
     environment:
@@ -546,17 +546,17 @@ services:
   # PostgreSQL database for storing video metadata, user data, etc.
   postgres:
     image: postgres:15-alpine
-    container_name: supoclip-postgres
+    container_name: Clipify-postgres
     environment:
-      POSTGRES_DB: supoclip
-      POSTGRES_USER: supoclip
-      POSTGRES_PASSWORD: supoclip_password
+      POSTGRES_DB: Clipify
+      POSTGRES_USER: Clipify
+      POSTGRES_PASSWORD: Clipify_password
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U supoclip -d supoclip"]
+      test: ["CMD-SHELL", "pg_isready -U Clipify -d Clipify"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -577,4 +577,4 @@ volumes:
 
 networks:
   default:
-    name: supoclip-network
+    name: Clipify-network
