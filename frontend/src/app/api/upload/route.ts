@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 // A multi-gigabyte body can take longer than the platform default to stream
 // through. Keep this within Vercel Pro's 30-minute function limit; self-hosted
 // nginx also needs long upload timeouts (see docs/media-storage.md).
-export const maxDuration = 1800;
+export const maxDuration = 300;
 
 export async function POST(request: Request) {
   const session = await auth.api.getSession({ headers: await headers() });
